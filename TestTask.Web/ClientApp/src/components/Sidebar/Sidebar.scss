@@ -1,0 +1,55 @@
+﻿@import "../../variables";
+
+$mi-active-color: #007bff;
+
+.sidebar {
+    min-width: 170px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Behind the navbar */
+    padding: $top-menu-height 0 0; /* Height of navbar */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+
+    .nav-link {
+        font-weight: 500;
+        color: #333;
+
+        &.active {
+            color: $mi-active-color;
+        }
+
+        &:hover, &.active {
+            .svg-inline--fa {
+                color: inherit;
+            }
+        }
+    }
+
+    .svg-inline--fa {
+        color: #999;
+        margin-right: 10px;
+    }
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - $top-menu-height);
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+    .sidebar-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
+}
+
+.sidebar-heading {
+    font-size: .75rem;
+    text-transform: uppercase;
+}

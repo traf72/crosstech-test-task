@@ -1,0 +1,27 @@
+﻿@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+
+.react-select {
+    &.is-invalid {
+        .react-select__control {
+            border-color: $red;
+        }
+    }
+}
+
+.react-select-sm {
+    .react-select__control {
+        height: calc(1.8125rem + 2px);
+        min-height: calc(1.8125rem + 2px);
+    }
+
+    .react-select__placeholder {
+        font-size: .8rem;
+        top: 49%;
+    }
+
+    .react-select__indicator svg {
+        height: 15px;
+        width: 15px;
+    }
+}
