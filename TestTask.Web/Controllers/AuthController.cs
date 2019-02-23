@@ -1,8 +1,10 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using TestTask.Common.Mappers;
+using TestTask.DAL.Entities.Identity;
+using TestTask.Logic.Services;
 using TestTask.Web.Model;
 
 namespace TestTask.Web.Controllers
@@ -11,11 +13,16 @@ namespace TestTask.Web.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly SignInManager<IdentityUser<int>> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserService _userService;
+        private readonly IMapper<ApplicationUser, UserVm> _userMapper;
 
-        public AuthController(SignInManager<IdentityUser<int>> signInManager)
+        public AuthController(SignInManager<ApplicationUser> signInManager, IUserService userService,
+            IMapper<ApplicationUser, UserVm> userMapper)
         {
             _signInManager = signInManager;
+            _userService = userService;
+            _userMapper = userMapper;
         }
 
         [HttpPost]
@@ -25,7 +32,8 @@ namespace TestTask.Web.Controllers
             var signInResult = await _signInManager.PasswordSignInAsync(credentials.Login, credentials.Password, credentials.RememberMe, true);
             if (signInResult.Succeeded)
             {
-                return new { user = await GetUser(credentials.Login) };
+                var user = await _userService.FindByName(credentials.Login);
+                return new { user = _userMapper.Map(user) };
             }
 
             string error = "Неверный логин или пароль";
@@ -50,24 +58,8 @@ namespace TestTask.Web.Controllers
         public async Task<UserVm> Get()
         {
             return User.Identity != null && User.Identity.IsAuthenticated
-                ? await GetUser(User.Identity.Name)
+                ? _userMapper.Map(await _userService.FindByName(User.Identity.Name))
                 : null;
-        }
-
-        private async Task<UserVm> GetUser(string name)
-        {
-            var userManager = _signInManager.UserManager;
-            var user = await userManager.FindByNameAsync(name);
-            if (user == null)
-            {
-                return null;
-            }
-
-            var userVm = new UserVm();
-            userVm = user.Adapt(userVm);
-            userVm.Roles = await userManager.GetRolesAsync(user);
-
-            return userVm;
         }
 
         [HttpDelete]

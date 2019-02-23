@@ -17,6 +17,9 @@ class NavMenu extends React.Component {
     }
 
     render() {
+        const user = this.props.user;
+        const userName = `${user.firstName} ${user.lastName}`;
+
         return (
             <header>
                 <Navbar className="nav-menu p-0 shadow" fixed="top" expand="sm" color="dark" dark>
@@ -26,7 +29,7 @@ class NavMenu extends React.Component {
                         <Nav className="mr-auto my-2 my-sm-0" navbar></Nav>
                         <Nav className="mx-3 mx-sm-2 my-2 my-sm-0" navbar>
                             <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav caret><FontAwesomeIcon icon="user" />{this.props.user.userName}</DropdownToggle>
+                                <DropdownToggle nav caret><FontAwesomeIcon icon="user" />{userName}</DropdownToggle>
                                 <DropdownMenu right>
                                     <DropdownItem><FontAwesomeIcon icon="cog" />Профиль</DropdownItem>
                                     <DropdownItem onClick={e => this.props.signOut()}><FontAwesomeIcon icon="sign-out-alt" />Выход</DropdownItem>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TestTask.DAL.Entities;
+using TestTask.DAL.Entities.Identity;
 using TestTask.DAL.Enums;
 
 namespace TestTask.DAL
@@ -22,39 +23,45 @@ namespace TestTask.DAL
             return (IEnumerable<T>)property.GetValue(null);
         }
 
-        private static IEnumerable<IdentityRole<int>> ApplicationRoles => new[]
+        private static IEnumerable<ApplicationRole> ApplicationRoles => new[]
         {
-            FillRole(new IdentityRole<int> { Id = 1, Name = "Admin", ConcurrencyStamp = "93a86429-ba08-4b24-ba8d-91f04914ad60" }),
-            FillRole(new IdentityRole<int> { Id = 2, Name = "User", ConcurrencyStamp = "c4d0126c-6e8c-49ee-9bf1-9ee218b014a4" }),
+            FillRole(new ApplicationRole { Id = 1, Name = "Admin", ConcurrencyStamp = "93a86429-ba08-4b24-ba8d-91f04914ad60" }),
+            FillRole(new ApplicationRole { Id = 2, Name = "User", ConcurrencyStamp = "c4d0126c-6e8c-49ee-9bf1-9ee218b014a4" }),
         };
 
-        private static IdentityRole<int> FillRole(IdentityRole<int> role)
+        private static ApplicationRole FillRole(ApplicationRole role)
         {
             role.NormalizedName = role.Name.ToUpper();
             return role;
         }
 
-        private static IEnumerable<IdentityUser<int>> ApplicationUsers => new[]
+        private static IEnumerable<ApplicationUser> ApplicationUsers => new[]
         {
-            FillUser(new IdentityUser<int>
+            FillUser(new ApplicationUser
             {
                 Id = 1,
                 UserName = "Admin",
                 Email = "admin@mail.ru",
+                LastName = "Королев",
+                FirstName = "Дмитрий",
+                Patronymic = "Иванович",
                 SecurityStamp = "1d371eb8-7517-410b-88ef-dd5ef394d08a",
                 ConcurrencyStamp = "82699662-4d34-48db-9a8f-d0a2bd4d7dff",
             }),
-            FillUser(new IdentityUser<int>
+            FillUser(new ApplicationUser
             {
                 Id = 2,
                 UserName = "User",
                 Email = "user@mail.ru",
+                LastName = "Дорофеева",
+                FirstName = "Мария",
+                Patronymic = "Викторовна",
                 SecurityStamp = "ca46a22d-0712-40b6-805d-f53b2f0cb10e",
                 ConcurrencyStamp = "a5fc2058-cf60-405a-81f4-3ed6edcf400a",
             }),
         };
 
-        private static IdentityUser<int> FillUser(IdentityUser<int> user)
+        private static ApplicationUser FillUser(ApplicationUser user)
         {
             user.PasswordHash = "AQAAAAEAACcQAAAAEJZ4S06wTDJtqQ1s4Gp2r9F5LyOShaHSFho4XVQO609+zjGpOQlkQnvYhUTVyODkCA=="; // Qw123456!
             user.NormalizedUserName = user.UserName.ToUpper();
@@ -63,10 +70,10 @@ namespace TestTask.DAL
             return user;
         }
 
-        private static IEnumerable<IdentityUserRole<int>> UserRoles => new[]
+        private static IEnumerable<ApplicationUserRole> UserRoles => new[]
         {
-            new IdentityUserRole<int> { UserId = 1, RoleId = 1 },
-            new IdentityUserRole<int> { UserId = 2, RoleId = 2 },
+            new ApplicationUserRole { UserId = 1, RoleId = 1 },
+            new ApplicationUserRole { UserId = 2, RoleId = 2 },
         };
 
         private static IEnumerable<Position> Positions => new[]

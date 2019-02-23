@@ -41,7 +41,10 @@ namespace TestTask.DAL.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    FirstName = table.Column<string>(maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(maxLength: 100, nullable: false),
+                    Patronymic = table.Column<string>(maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -204,13 +207,13 @@ namespace TestTask.DAL.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "82699662-4d34-48db-9a8f-d0a2bd4d7dff", "admin@mail.ru", false, true, null, "ADMIN@MAIL.RU", "ADMIN", "AQAAAAEAACcQAAAAEJZ4S06wTDJtqQ1s4Gp2r9F5LyOShaHSFho4XVQO609+zjGpOQlkQnvYhUTVyODkCA==", null, false, "1d371eb8-7517-410b-88ef-dd5ef394d08a", false, "Admin" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Patronymic", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 1, 0, "82699662-4d34-48db-9a8f-d0a2bd4d7dff", "admin@mail.ru", false, "Дмитрий", "Королев", true, null, "ADMIN@MAIL.RU", "ADMIN", "AQAAAAEAACcQAAAAEJZ4S06wTDJtqQ1s4Gp2r9F5LyOShaHSFho4XVQO609+zjGpOQlkQnvYhUTVyODkCA==", "Иванович", null, false, "1d371eb8-7517-410b-88ef-dd5ef394d08a", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 2, 0, "a5fc2058-cf60-405a-81f4-3ed6edcf400a", "user@mail.ru", false, true, null, "USER@MAIL.RU", "USER", "AQAAAAEAACcQAAAAEJZ4S06wTDJtqQ1s4Gp2r9F5LyOShaHSFho4XVQO609+zjGpOQlkQnvYhUTVyODkCA==", null, false, "ca46a22d-0712-40b6-805d-f53b2f0cb10e", false, "User" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Patronymic", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 2, 0, "a5fc2058-cf60-405a-81f4-3ed6edcf400a", "user@mail.ru", false, "Мария", "Дорофеева", true, null, "USER@MAIL.RU", "USER", "AQAAAAEAACcQAAAAEJZ4S06wTDJtqQ1s4Gp2r9F5LyOShaHSFho4XVQO609+zjGpOQlkQnvYhUTVyODkCA==", "Викторовна", null, false, "ca46a22d-0712-40b6-805d-f53b2f0cb10e", false, "User" });
 
             migrationBuilder.InsertData(
                 table: "Positions",

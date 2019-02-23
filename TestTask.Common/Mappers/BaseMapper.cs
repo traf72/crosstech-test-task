@@ -10,7 +10,7 @@ namespace TestTask.Common.Mappers
     {
         public TTo Map(TFrom input)
         {
-            return Map(input, default(TTo));
+            return Map(input, default);
         }
 
         public abstract TTo Map(TFrom input, TTo output);

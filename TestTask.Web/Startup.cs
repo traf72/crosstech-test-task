@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TestTask.DAL;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using TestTask.DAL;
+using TestTask.DAL.Entities.Identity;
 
 [assembly: ApiController]
 
@@ -19,17 +19,25 @@ namespace TestTask.Web
     public class Startup
     {
         private Assembly _logicAssembly;
+        private Assembly _webAssembly;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             InitAssemblies();
+            ConfigMapping();
         }
 
         private void InitAssemblies()
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             _logicAssembly = GetAssembly("TestTask.Logic", assemblies);
+            _webAssembly = GetAssembly("TestTask.Web", assemblies);
+        }
+
+        private void ConfigMapping()
+        {
+            MappingConfig.Init();
         }
 
         private Assembly GetAssembly(string name, Assembly[] assemblies)
@@ -44,7 +52,7 @@ namespace TestTask.Web
         {
             services.AddDbContext<TestTaskContext>(options => options.UseSqlite(Configuration.GetConnectionString("TestDb")));
 
-            services.AddIdentity<IdentityUser<int>, IdentityRole<int>>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<TestTaskContext>()
                 .AddDefaultTokenProviders();
 
@@ -68,18 +76,40 @@ namespace TestTask.Web
             });
 
             RegisterLogicServices(services);
+            RegisterMappers(services);
         }
 
-        private void RegisterLogicServices(IServiceCollection services)
+        private void RegisterLogicServices(IServiceCollection serviceCollection)
         {
-            var servicesTypes = _logicAssembly.GetTypes()
-                .Where(t => t.IsClass
-                            && t.Namespace != null
-                            && t.Namespace.EndsWith("Services")
-                            && !t.IsNested);
-            foreach (Type service in servicesTypes)
+            var services = _logicAssembly.GetTypes()
+                .Where(t => t.Namespace != null && t.Namespace.EndsWith("Services") && !t.IsNested)
+                .ToArray();
+
+            var interfaces = services.Where(t => t.IsInterface).ToArray();
+            var implementations = services.Where(t => t.IsClass).ToArray();
+            foreach (Type service in interfaces)
             {
-                services.AddScoped(service);
+                var implementation = implementations.SingleOrDefault(t => service.IsAssignableFrom(t));
+                if (implementation != null)
+                {
+                    serviceCollection.AddScoped(service, implementation);
+                }
+            }
+        }
+
+        private void RegisterMappers(IServiceCollection serviceCollection)
+        {
+            var mappers = _webAssembly.GetTypes()
+                .Where(t => t.Namespace != null && t.Namespace.EndsWith("Mappers"))
+                .ToArray();
+
+            foreach (Type mapper in mappers)
+            {
+                var @interface = mapper.GetInterface("IMapper`2");
+                if (@interface != null)
+                {
+                    serviceCollection.AddScoped(@interface, mapper);
+                }
             }
         }
 

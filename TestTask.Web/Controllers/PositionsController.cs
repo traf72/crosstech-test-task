@@ -12,7 +12,7 @@ namespace TestTask.Web.Controllers
     public class PositionsController : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<CatalogVm<int>>> Get()
+        public async Task<IEnumerable<PositionVm>> Get()
         {
             throw new NotImplementedException();
         }

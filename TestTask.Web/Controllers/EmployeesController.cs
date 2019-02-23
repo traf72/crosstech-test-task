@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using TestTask.Common.Mappers;
+using TestTask.DAL.Entities;
+using TestTask.Logic.Services;
 using TestTask.Web.Model;
 
 namespace TestTask.Web.Controllers
@@ -11,10 +14,19 @@ namespace TestTask.Web.Controllers
     [Route("api/[controller]")]
     public class EmployeesController : ControllerBase
     {
+        private readonly IEmployeeService _employeeService;
+        private readonly IMapper<Employee, EmployeeVm> _employeeToVmMapper;
+
+        public EmployeesController(IEmployeeService employeeService, IMapper<Employee, EmployeeVm> employeeToVmMapper)
+        {
+            _employeeService = employeeService;
+            _employeeToVmMapper = employeeToVmMapper;
+        }
+
         [HttpGet]
         public async Task<IEnumerable<EmployeeVm>> Get()
         {
-            throw new NotImplementedException();
+            return _employeeToVmMapper.Map(await _employeeService.GetAll());
         }
 
         [HttpGet("{id}")]

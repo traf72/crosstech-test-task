@@ -16,6 +16,6 @@ namespace TestTask.Web.Model
 
         public string Phone { get; set; }
 
-        public CatalogVm<int> Position { get; set; }
+        public PositionVm Position { get; set; }
     }
 }
