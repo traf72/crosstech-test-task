@@ -1,6 +1,8 @@
 function getErrorMessage(cause, message) {
     if (cause.response.status === 401) {
         return 'Ваша сессия авторизации истекла, пожалуйста, обновите страницу';
+    } else if (cause.response.status === 403) {
+        return 'У вас недостаточно прав для просмотра данного ресурса';
     } else if (cause.response.status === 404) {
         return 'Запрошенный вами ресурс не найден';
     } else if (message) {

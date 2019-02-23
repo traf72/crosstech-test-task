@@ -1,14 +1,16 @@
 import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router';
 import Layout from './components/Layout';
-import Alert from './components/common/Alert';
 import PrivateRoute from './components/PrivateRoute';
+import ProtectRoute from './decorators/ProtectRoute.js';
 import SignIn from './components/Auth/SignIn';
 import Employees from './components/Employees';
+import Charts from './components/Charts';
+import NotFound from "./components/NotFound";
 import { home, charts, signIn } from './routes';
 
 export default () => {
-    function renderComponent(route, Component, withLayout = true) {
+    function renderComponent(Component, withLayout = true) {
         if (withLayout) {
             return (
                 <Layout>
@@ -23,11 +25,11 @@ export default () => {
     return (
         <Fragment>
             <Switch>
-                <Route path={signIn.url} render={route => renderComponent(route, SignIn, false)} />
-                <PrivateRoute path={home.url} render={route => renderComponent(route, Employees)} />
-                <PrivateRoute render={renderComponent} />
+                <Route path={signIn.url} exact={signIn.exact} render={route => renderComponent(SignIn, false)} />
+                <PrivateRoute path={home.url} exact={home.exact} render={route => renderComponent(Employees)} />
+                <PrivateRoute path={charts.url} exact={charts.exact} render={route => renderComponent(Charts)} />
+                <PrivateRoute render={route => renderComponent(NotFound)} />
             </Switch>
-            <Alert />
         </Fragment>
     );
 }
