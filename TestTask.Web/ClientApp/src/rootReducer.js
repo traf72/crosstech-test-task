@@ -4,10 +4,12 @@ import { connectRouter } from 'connected-react-router';
 import alertReducer from './ducks/Alert';
 import pageLoaderReducer from './ducks/PageLoader';
 import authReducer from './ducks/Auth';
+import employeesReducer from './ducks/Employees';
 
 export default combineReducers({
     router: connectRouter(history),
     alert: alertReducer,
     pageLoader: pageLoaderReducer,
     auth: authReducer,
+    employees: employeesReducer,
 });
