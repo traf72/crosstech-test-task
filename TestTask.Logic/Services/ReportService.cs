@@ -28,5 +28,19 @@ namespace TestTask.Logic.Services
 
             return await result.ToDictionaryAsync(x => x.Sex.ToString(), x => x.Count);
         }
+
+        public async Task<IDictionary<string, int>> EmplyeesCountByDecades()
+        {
+            var result =
+                from e in _dbContext.Employees
+                group e by e.BirthDate.Year / 10 into g
+                select new
+                {
+                    Period = $"{g.Key}0 - {g.Key}9",
+                    Count = g.Count(),
+                };
+
+            return await result.ToDictionaryAsync(x => x.Period, x => x.Count);
+        }
     }
 }

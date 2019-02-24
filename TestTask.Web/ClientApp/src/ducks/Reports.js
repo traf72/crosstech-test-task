@@ -4,7 +4,8 @@ import { takeEvery, put, call, select, all } from 'redux-saga/effects';
 import { showErrorAlert } from './Alert';
 import RequestError from '../RequestError';
 
-export const EMPLYEES_COUNT_BY_SEX = 'EmplyeesCountBySex';
+export const EMPLOYEES_COUNT_BY_SEX = 'EmplyeesCountBySex';
+export const EMPLOYEES_COUNT_BY_DECADES = 'EmplyeesCountByDecades';
 
 const moduleName = 'reports';
 export const FETCH_REQUEST = `${appName}/${moduleName}/FETCH_REQUEST`;
@@ -20,7 +21,8 @@ const reportInitialState = {
 };
 
 const initialState = {
-    [EMPLYEES_COUNT_BY_SEX]: reportInitialState,
+    [EMPLOYEES_COUNT_BY_SEX]: reportInitialState,
+    [EMPLOYEES_COUNT_BY_DECADES]: reportInitialState,
 };
 
 export default function reducer(state = initialState, action) {

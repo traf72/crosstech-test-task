@@ -22,5 +22,11 @@ namespace TestTask.Web.Controllers
         {
             return await _reportService.EmplyeesCountBySex();
         }
+
+        [HttpGet]
+        public async Task<IDictionary<string, int>> EmplyeesCountByDecades()
+        {
+            return await _reportService.EmplyeesCountByDecades();
+        }
     }
 }
