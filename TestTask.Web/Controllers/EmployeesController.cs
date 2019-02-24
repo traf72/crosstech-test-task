@@ -71,7 +71,7 @@ namespace TestTask.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            await _employeeService.Delete(id);
         }
     }
 }
