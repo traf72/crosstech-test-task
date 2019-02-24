@@ -7,6 +7,7 @@ import pageLoaderReducer from './ducks/PageLoader';
 import authReducer from './ducks/Auth';
 import employeesReducer from './ducks/Employees';
 import employeeReducer from './ducks/Employee';
+import reportsReducer from './ducks/Reports';
 
 export default combineReducers({
     router: connectRouter(history),
@@ -16,4 +17,5 @@ export default combineReducers({
     auth: authReducer,
     employees: employeesReducer,
     employee: employeeReducer,
+    reports: reportsReducer,
 });

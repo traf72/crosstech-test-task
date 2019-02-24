@@ -35,3 +35,7 @@ export const signOut = () => {
 export const getCurrentUser = () => {
     return axios.get(`api/auth`);
 }
+
+export const getReport = reportName => {
+    return axios.get(`api/reports/${reportName}`);
+}

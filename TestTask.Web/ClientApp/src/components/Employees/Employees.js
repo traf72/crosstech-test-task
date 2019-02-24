@@ -1,4 +1,3 @@
-import './Employees.scss';
 import React, { Component } from 'react';
 import DataGrid from '../common/DataGrid';
 import Button from '../common/Button';

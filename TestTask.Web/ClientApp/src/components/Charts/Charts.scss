@@ -1,1 +1,13 @@
-﻿
+﻿.charts {
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        position: absolute;
+        left: 200px;
+        top: 100px;
+    }
+}
+
+.charts-chart {
+    position: relative;
+}
