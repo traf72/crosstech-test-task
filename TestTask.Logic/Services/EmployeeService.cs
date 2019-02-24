@@ -15,14 +15,31 @@ namespace TestTask.Logic.Services
             _dbContext = dbContext;
         }
 
-        public IQueryable<Employee> QueryAll()
+        public IQueryable<Employee> QueryAll(bool includePosition = true)
         {
-            return _dbContext.Employees.Include(e => e.Position);
+            IQueryable<Employee> employees = _dbContext.Employees;
+            if (includePosition)
+            {
+                employees = employees.Include(e => e.Position);
+            }
+
+            return employees;
         }
 
-        public async Task<Employee> Find(int id)
+        public async Task<Employee> Find(int id, bool includePosition = true)
         {
-            return await QueryAll().SingleOrDefaultAsync(e => e.Id == id);
+            return await QueryAll(includePosition).SingleOrDefaultAsync(e => e.Id == id);
+        }
+
+        public async Task<Employee> CreateOrEdit(Employee employee)
+        {
+            if (employee.Id == 0)
+            {
+                _dbContext.Employees.Add(employee);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return employee;
         }
     }
 }

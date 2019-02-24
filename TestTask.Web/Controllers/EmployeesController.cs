@@ -17,11 +17,14 @@ namespace TestTask.Web.Controllers
     {
         private readonly IEmployeeService _employeeService;
         private readonly IMapper<Employee, EmployeeVm> _employeeToVmMapper;
+        private readonly IMapper<EmployeeVm, Employee> _employeeFromVmMap;
 
-        public EmployeesController(IEmployeeService employeeService, IMapper<Employee, EmployeeVm> employeeToVmMapper)
+        public EmployeesController(IEmployeeService employeeService, IMapper<Employee, EmployeeVm> employeeToVmMapper,
+            IMapper<EmployeeVm, Employee> employeeFromVmMap)
         {
             _employeeService = employeeService;
             _employeeToVmMapper = employeeToVmMapper;
+            _employeeFromVmMap = employeeFromVmMap;
         }
 
         [HttpGet]
@@ -44,16 +47,24 @@ namespace TestTask.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<int> Create(EmployeeVm employee)
+        public async Task<EmployeeVm> Create(EmployeeVm employee)
         {
-            throw new NotImplementedException();
+            var newEmployee = await _employeeService.CreateOrEdit(_employeeFromVmMap.Map(employee));
+            return _employeeToVmMapper.Map(newEmployee);
         }
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task Update(EmployeeVm employee)
+        public async Task<EmployeeVm> Update(EmployeeVm employee)
         {
-            throw new NotImplementedException();
+            var existingEmployee = await _employeeService.Find(employee.Id, false);
+            if (existingEmployee == null)
+            {
+                throw new InvalidOperationException($"Сотрудник с идентификатором \"{employee.Id}\" не найден");
+            }
+
+            var editedEmployee = await _employeeService.CreateOrEdit(_employeeFromVmMap.Map(employee, existingEmployee));
+            return _employeeToVmMapper.Map(editedEmployee);
         }
 
         [HttpDelete]

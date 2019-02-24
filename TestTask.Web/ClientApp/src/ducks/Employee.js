@@ -168,7 +168,7 @@ export const saveEmployeeSaga = function* (action) {
         }
 
         if (!isLocationChanged(state)) {
-            yield put(push(home.buildUrl({ id: savedEmployee.id })));
+            yield put(push(home.buildUrl()));
         }
     } catch (error) {
         const reqError = new RequestError(error, 'При сохранении сотрудника произошла ошибка');

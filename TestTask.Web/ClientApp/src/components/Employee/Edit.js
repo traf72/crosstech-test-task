@@ -70,8 +70,17 @@ export class Edit extends Component {
     }
 
     getEmployeeToSave = () => {
-        const { id, lastName, firstName, patronymic, sex, birthDate, position, phone } = this.state.employee;
-        return { id, lastName, firstName, patronymic, sex, birthDate, position, phone };
+        const employee = this.state.employee;
+        return {
+            id: employee.id,
+            firstName: employee.firstName,
+            patronymic: employee.patronymic,
+            lastName: employee.lastName,
+            sex: employee.sex.id,
+            position: { id: employee.position.id },
+            birthDate: employee.birthDate,
+            phone: employee.phone,
+        };
     }
 
     filterNotRussianSymbols(e) {

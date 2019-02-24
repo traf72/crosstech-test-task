@@ -6,8 +6,10 @@ namespace TestTask.Logic.Services
 {
     public interface IEmployeeService
     {
-        IQueryable<Employee> QueryAll();
+        IQueryable<Employee> QueryAll(bool includePosition = true);
 
-        Task<Employee> Find(int id);
+        Task<Employee> Find(int id, bool includePosition = true);
+
+        Task<Employee> CreateOrEdit(Employee employee);
     }
 }
