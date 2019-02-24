@@ -13,7 +13,10 @@ import { saveEmployee, employeeNewSelector, employeeFullSelector, fetchEmployee,
 import { showWarningAlert } from '../../ducks/Alert';
 import { allActions as pageLoaderActions } from '../../ducks/PageLoader';
 import { phoneMask } from '../../constants';
-import { requireValidator, phoneValidator } from '../../libs/validators';
+import { requireValidator, phoneValidator, dateRangeValidator } from '../../libs/validators';
+
+const birthDateLimitStart = new Date(1940, 0, 1);
+const birthDateLimitEnd = new Date(2005, 11, 31);
 
 export class Edit extends Component {
     static getDerivedStateFromProps(props, state) {
@@ -215,11 +218,11 @@ export class Edit extends Component {
                     <Col sm={6} lg={3}>
                         <DatePicker
                             id="birthDate"
-                            minDate={new Date(1940, 0, 1)}
-                            maxDate={new Date(2005, 11, 31)}
+                            minDate={birthDateLimitStart}
+                            maxDate={birthDateLimitEnd}
                             selected={this.state.employee.birthDate}
                             onChange={value => this.handleStateChange('birthDate', value)}
-                            invalid={this.isInputInvalid('birthDate', [requireValidator('Введите дату рождения')])}
+                            invalid={this.isInputInvalid('birthDate', [requireValidator('Введите дату рождения'), dateRangeValidator(birthDateLimitStart, birthDateLimitEnd)])}
                         />
                         <ValidationMessage className="validation-message-under">{this.getInputErrorMessage('birthDate')}</ValidationMessage>
                     </Col>
