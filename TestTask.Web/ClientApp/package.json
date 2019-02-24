@@ -9,7 +9,6 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
     "connected-react-router": "^6.2.2",
-    "immutable": "^4.0.0-rc.12",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-css-loaders": "0.0.5",
@@ -25,8 +24,7 @@
     "reactstrap": "^7.1.0",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0",
-    "shallowequal": "^1.1.0",
-    "uuid": "^3.3.2"
+    "shallowequal": "^1.1.0"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
