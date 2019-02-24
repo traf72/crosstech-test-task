@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+axios.defaults.headers.common['Pragma'] = 'no-cache';
+axios.defaults.headers.common['Cache-control'] = 'no-cache no-store';
+
 export const getCatalog = (catalogName, params) => {
     return axios.get(`api/catalog/${catalogName}`, { params });
 }
