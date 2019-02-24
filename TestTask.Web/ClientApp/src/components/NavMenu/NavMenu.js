@@ -31,7 +31,6 @@ class NavMenu extends React.Component {
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav caret><FontAwesomeIcon icon="user" />{userName}</DropdownToggle>
                                 <DropdownMenu right>
-                                    <DropdownItem><FontAwesomeIcon icon="cog" />Профиль</DropdownItem>
                                     <DropdownItem onClick={e => this.props.signOut()}><FontAwesomeIcon icon="sign-out-alt" />Выход</DropdownItem>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
