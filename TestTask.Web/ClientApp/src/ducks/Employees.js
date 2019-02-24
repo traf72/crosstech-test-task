@@ -1,6 +1,6 @@
 import { appName } from '../constants';
-import { getEmployees } from '../api';
-import { takeLatest, put, call, all } from 'redux-saga/effects';
+import { getEmployees, deleteEmployee as deleteEmp } from '../api';
+import { takeLatest, takeEvery, put, call, all } from 'redux-saga/effects';
 import { showErrorAlert } from './Alert';
 import { sex as sexEnum } from '../enums';
 import RequestError from '../RequestError';
@@ -10,6 +10,7 @@ export const FETCH_REQUEST = `${appName}/${moduleName}/FETCH_REQUEST`;
 export const FETCH_START = `${appName}/${moduleName}/FETCH_START`;
 export const FETCH_SUCCESS = `${appName}/${moduleName}/FETCH_SUCCESS`;
 export const FETCH_FAILED = `${appName}/${moduleName}/FETCH_FAILED`;
+export const DELETE_REQUEST = `${appName}/${moduleName}/DELETE_REQUEST`;
 
 const initialState = {
     loading: false,
@@ -74,8 +75,15 @@ export const fetchFailed = error => {
     }
 }
 
+export const deleteEmployee = id => {
+    return {
+        type: DELETE_REQUEST,
+        payload: { id },
+    }
+}
+
 export const allActions = {
-    fetch, fetchStart, fetchSuccess, fetchFailed
+    fetch, fetchStart, fetchSuccess, fetchFailed, deleteEmployee
 };
 
 export const fetchSaga = function* () {
@@ -94,8 +102,21 @@ export const fetchSaga = function* () {
     }
 }
 
+export const deleteSaga = function* (action) {
+    try {
+        yield call(deleteEmp, action.payload.id);
+        yield put(fetch());
+    } catch (error) {
+        const reqError = new RequestError(error, 'При удалении сотрудника произошла ошибка');
+        put(showErrorAlert(reqError.message));
+    }
+}
+
 export const saga = function* () {
-    yield takeLatest(FETCH_REQUEST, fetchSaga);
+    yield all([
+        takeLatest(FETCH_REQUEST, fetchSaga),
+        takeEvery(DELETE_REQUEST, deleteSaga),
+    ]);
 }
 
 export const selector = employees => {

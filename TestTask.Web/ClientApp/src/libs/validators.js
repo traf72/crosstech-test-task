@@ -32,7 +32,7 @@ export const dateRangeValidator = (dateStart, dateEnd, message, options = {}) =>
     const { validIfEmpty = true } = options;
 
     return value => {
-        if (validIfEmpty && isEmpty(value) || (value >= dateStart && value <= dateEnd)) {
+        if ((validIfEmpty && isEmpty(value)) || (value >= dateStart && value <= dateEnd)) {
             return null;
         }
 

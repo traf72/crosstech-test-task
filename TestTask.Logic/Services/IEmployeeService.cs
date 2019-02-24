@@ -11,5 +11,7 @@ namespace TestTask.Logic.Services
         Task<Employee> Find(int id, bool includePosition = true);
 
         Task<Employee> CreateOrEdit(Employee employee);
+
+        Task Delete(int id);
     }
 }

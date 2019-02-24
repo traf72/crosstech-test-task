@@ -41,5 +41,15 @@ namespace TestTask.Logic.Services
             await _dbContext.SaveChangesAsync();
             return employee;
         }
+
+        public async Task Delete(int id)
+        {
+            var employee = await _dbContext.Employees.FindAsync(id);
+            if (employee != null)
+            {
+                _dbContext.Employees.Remove(employee);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

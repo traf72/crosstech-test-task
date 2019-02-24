@@ -21,7 +21,7 @@ export const editEmployee = employee => {
 }
 
 export const deleteEmployee = id => {
-    return axios.delete(`api/employees`, id);
+    return axios.delete(`api/employees`, { params: { id }});
 }
 
 export const signIn = credentials => {
