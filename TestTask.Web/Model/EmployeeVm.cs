@@ -4,6 +4,8 @@ namespace TestTask.Web.Model
 {
     public class EmployeeVm
     {
+        public int Id { get; set; }
+
         public string LastName { get; set; }
 
         public string FirstName { get; set; }
@@ -16,6 +18,6 @@ namespace TestTask.Web.Model
 
         public string Phone { get; set; }
 
-        public PositionVm Position { get; set; }
+        public CatalogVm<int> Position { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace TestTask.Web.Model
 {
-    public class PositionVm
+    public class CatalogVm<T>
     {
-        public int Id { get; set; }
+        public T Id { get; set; }
 
         public string Name { get; set; }
     }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TestTask.DAL;
 using TestTask.DAL.Entities;
@@ -15,9 +15,14 @@ namespace TestTask.Logic.Services
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Employee>> GetAll()
+        public IQueryable<Employee> QueryAll()
         {
-            return await _dbContext.Employees.Include(e => e.Position).ToListAsync();
+            return _dbContext.Employees.Include(e => e.Position);
+        }
+
+        public async Task<Employee> Find(int id)
+        {
+            return await QueryAll().SingleOrDefaultAsync(e => e.Id == id);
         }
     }
 }

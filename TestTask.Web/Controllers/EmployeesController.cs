@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,14 +27,19 @@ namespace TestTask.Web.Controllers
         [HttpGet]
         public async Task<IEnumerable<EmployeeVm>> Get()
         {
-            return _employeeToVmMapper.Map(await _employeeService.GetAll());
+            return _employeeToVmMapper.Map(await _employeeService.QueryAll().ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<EmployeeVm>> Get(int id)
         {
-            throw new NotImplementedException();
-            return NotFound();
+            var employee = await _employeeService.Find(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return _employeeToVmMapper.Map(employee);
         }
 
         [HttpPost]

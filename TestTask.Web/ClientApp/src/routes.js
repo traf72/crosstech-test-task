@@ -26,8 +26,9 @@ export const isPathMatch = (path, route, options = { exact: true, strict: false 
 }
 
 export const home = new Route('/', 'Сотрудники', true);
-export const newEmployee = new Route('/new', 'Новый сотрудник');
-export const editEmployee = new Route('/edit/:id(\\d+)', 'Редактировать сотрудника');
+export const employee = new Route('/employee', '');
+export const newEmployee = new Route('/employee/new', 'Новый сотрудник');
+export const editEmployee = new Route('/employee/edit/:id(\\d+)', 'Редактировать сотрудника');
 export const charts = new Route('/charts', 'Диаграммы');
 export const signIn = new Route('/signin', '');
 
@@ -37,6 +38,7 @@ export const sidebarRoutes = {
 };
 
 export const otherRoutes = {
+    employee,
     newEmployee,
     editEmployee,
     signIn,

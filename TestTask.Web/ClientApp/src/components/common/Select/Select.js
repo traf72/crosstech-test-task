@@ -1,3 +1,4 @@
+import './Select.scss';
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactSelect, { components } from 'react-select';
@@ -31,9 +32,9 @@ const Select = props => {
 
     return (
         <ReactSelect
-            placeholder={props.multi ? '¬˚·ÂËÚÂ ˝ÎÂÏÂÌÚ˚' : '¬˚·ÂËÚÂ ˝ÎÂÏÂÌÚ'}
-            noOptionsMessage={() => 'ÕË˜Â„Ó ÌÂ Ì‡È‰ÂÌÓ'}
-            loadingMessage={() => '«‡„ÛÁÍ‡...'}
+            placeholder={props.multi ? '–í—ã–±–µ—Ä–∏—Ç–µ —ç–ª–µ–º–µ–Ω—Ç—ã' : '–í—ã–±–µ—Ä–∏—Ç–µ —ç–ª–µ–º–µ–Ω—Ç'}
+            noOptionsMessage={() => '–ù–∏—á–µ–≥–æ –Ω–µ –Ω–∞–π–¥–µ–Ω–æ'}
+            loadingMessage={() => '–ó–∞–≥—Ä—É–∑–∫–∞...'}
             className={getClass()}
             classNamePrefix="react-select"
             getOptionValue={getOptionValue}

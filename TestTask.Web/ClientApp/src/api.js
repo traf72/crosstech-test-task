@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+export const getCatalog = (catalogName, params) => {
+    return axios.get(`api/catalog/${catalogName}`, { params });
+}
+
 export const getEmployees = () => {
     return axios.get(`api/employees`);
 }
@@ -18,10 +22,6 @@ export const editEmployee = employee => {
 
 export const deleteEmployee = id => {
     return axios.delete(`api/employees`, id);
-}
-
-export const getPositions = () => {
-    return axios.get(`api/positions`);
 }
 
 export const signIn = credentials => {
