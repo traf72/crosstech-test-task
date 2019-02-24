@@ -11,8 +11,8 @@ import { home as homeRoute } from '../../routes';
 
 class SignIn extends Component {
     state = {
-        login: 'admin',
-        password: 'Qw123456!',
+        login: '',
+        password: '',
         rememberMe: true,
     }
 
