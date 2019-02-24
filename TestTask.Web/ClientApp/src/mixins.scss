@@ -1,5 +1,0 @@
-﻿@mixin IE {
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-        @content;
-    }
-}
