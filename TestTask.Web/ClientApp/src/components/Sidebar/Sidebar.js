@@ -15,16 +15,14 @@ const Sidebar = ({ className, path }) => {
     const resultClass = `${className} sidebar`;
     return (
         <Navbar className={resultClass} color="light">
-            <div className="sidebar-sticky">
-                <Nav className="flex-column">
-                    <NavItem>
-                        {getNavLink(routes.home.url, 'users', routes.home.title)}
-                    </NavItem>
-                    <NavItem>
-                        {getNavLink(routes.charts.url, 'chart-pie', routes.charts.title)}
-                    </NavItem>
-                </Nav>
-            </div>
+            <Nav className="flex-column">
+                <NavItem>
+                    {getNavLink(routes.home.url, 'users', routes.home.title)}
+                </NavItem>
+                <NavItem>
+                    {getNavLink(routes.charts.url, 'chart-pie', routes.charts.title)}
+                </NavItem>
+            </Nav>
         </Navbar>
     );
 }
