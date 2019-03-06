@@ -12,7 +12,7 @@ const Sidebar = ({ className, path }) => {
         return <NavLink tag={Link} active={isPathMatch(path, url)} to={url}><FontAwesomeIcon icon={icon} fixedWidth />{title}</NavLink>;
     }
 
-    const resultClass = `${className} sidebar`;
+    const resultClass = `${className} sidebar mt-2`;
     return (
         <Navbar className={resultClass} color="light">
             <Nav className="flex-column">
