@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -87,13 +88,12 @@ namespace TestTask.Web
 
         private void RegisterLogicServices(IServiceCollection serviceCollection)
         {
-            var services = _logicAssembly.GetTypes()
-                .Where(t => t.Namespace != null && t.Namespace.EndsWith("Services") && !t.IsNested)
-                .ToArray();
+            IEnumerable<Type> GetTypes(string @namespace) => _logicAssembly.GetTypes()
+                .Where(t => t.Namespace != null && t.Namespace.EndsWith(@namespace) && !t.IsNested);
 
-            var interfaces = services.Where(t => t.IsInterface).ToArray();
-            var implementations = services.Where(t => t.IsClass).ToArray();
-            foreach (Type service in interfaces)
+            var services = GetTypes("Services").ToArray();
+            var implementations = GetTypes("ServicesImpl").ToArray();
+            foreach (Type service in services)
             {
                 var implementation = implementations.SingleOrDefault(t => service.IsAssignableFrom(t));
                 if (implementation != null)

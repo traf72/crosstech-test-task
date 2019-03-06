@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using TestTask.DAL;
 using TestTask.DAL.Entities;
+using TestTask.Logic.Services;
 
-namespace TestTask.Logic.Services
+namespace TestTask.Logic.ServicesImpl
 {
     public class PositionService : IPositionService
     {

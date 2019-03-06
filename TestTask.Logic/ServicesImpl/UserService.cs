@@ -3,8 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using TestTask.DAL;
 using TestTask.DAL.Entities.Identity;
+using TestTask.Logic.Services;
 
-namespace TestTask.Logic.Services
+namespace TestTask.Logic.ServicesImpl
 {
     public class UserService : IUserService
     {
