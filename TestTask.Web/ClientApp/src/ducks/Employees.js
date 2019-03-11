@@ -1,5 +1,6 @@
 import { appName } from '../constants';
 import { getEmployees, deleteEmployee as deleteEmp } from '../api';
+import { createSelector } from 'reselect';
 import { takeLatest, takeEvery, put, call, all } from 'redux-saga/effects';
 import { showErrorAlert } from './Alert';
 import { sex as sexEnum } from '../enums';
@@ -119,13 +120,13 @@ export const saga = function* () {
     ]);
 }
 
-export const selector = employees => {
-    return {
-        loadComplete: employees.loadComplete,
-        data: employees.data.map(emp => ({
-            ...emp,
-            sex: sexEnum[emp.sex],
-            birthDate: new Date(emp.birthDate),
-        }))
-    }
-}
+const employeesSelector = state => state.employees;
+
+export const selector = createSelector(
+    employeesSelector,
+    employees => employees.data.map(emp => ({
+        ...emp,
+        sex: sexEnum[emp.sex],
+        birthDate: new Date(emp.birthDate),
+    }))
+);

@@ -87,9 +87,9 @@ class Employees extends Component {
                 </ProtectedComponent>
 
                 <DataGrid
-                    data={this.props.employees.data}
+                    data={this.props.employees}
                     columns={this.columns}
-                    loading={!this.props.employees.loadComplete}
+                    loading={!this.props.loadComplete}
                     showPageSizeOptions={false}
                     showPagination={false}
                 />
@@ -100,7 +100,8 @@ class Employees extends Component {
 
 export default connect(state => {
     return {
-        employees: selector(state.employees),
+        loadComplete: state.employees.loadComplete,
+        employees: selector(state),
     };
 }, { ...pageLoaderActions, fetch, deleteEmployee }
 )(Employees);
