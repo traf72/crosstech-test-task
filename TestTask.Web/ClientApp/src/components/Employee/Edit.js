@@ -9,7 +9,10 @@ import Select from '../common/Select';
 import DatePicker from '../common/DatePicker';
 import ValidationMessage from '../common/ValidationMessage';
 import { SEX, POSITIONS, fetchCatalog } from '../../ducks/Catalog';
-import { saveEmployee, employeeNewSelector, employeeFullSelector, fetchEmployee, newEmployee, employeeCatalogs } from '../../ducks/Employee';
+import {
+    saveEmployee, isNewEmployeeReadySelector, isEmployeeReadySelector, employeeCatalogsSelector,
+    employeeNewSelector, employeeFullSelector, fetchEmployee, newEmployee
+} from '../../ducks/Employee';
 import { showWarningAlert } from '../../ducks/Alert';
 import { allActions as pageLoaderActions } from '../../ducks/PageLoader';
 import { phoneMask } from '../../constants';
@@ -19,32 +22,15 @@ const birthDateLimitStart = new Date(1940, 0, 1);
 const birthDateLimitEnd = new Date(2005, 11, 31);
 
 export class Edit extends Component {
-    static getDerivedStateFromProps(props, state) {
-        if (state.loadComplete) {
-            return null;
+    constructor(props) {
+        super(props);
+
+        const loadComplete = this.isNewEmployee() ? props.loadComplete : false;
+        this.state = {
+            employee: loadComplete ? props.employee : {},
+            loadComplete,
+            isFormSubmitted: false,
         }
-
-        const { employee } = props;
-
-        let loadComplete = employee.loadComplete;
-        if (state.loadComplete == null) {
-            loadComplete = loadComplete && employee.isActual;
-        }
-
-        if (!loadComplete) {
-            return { loadComplete };
-        }
-
-        return {
-            loadComplete: true,
-            employee,
-        }
-    }
-
-    state = {
-        employee: {},
-        loadComplete: null,
-        isFormSubmitted: false,
     }
 
     componentDidMount() {
@@ -52,19 +38,39 @@ export class Edit extends Component {
             return;
         }
 
-        this.props.showPageLoader();
+        this.ensureDataLoaded();
+    }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.id !== this.props.id) {
+            this.setState({
+                loadComplete: false,
+                employee: {},
+            });
+
+            this.ensureDataLoaded();
+            return;
+        }
+
+        if (!this.state.loadComplete && !prevProps.loadComplete && this.props.loadComplete) {
+            this.props.hidePageLoader();
+            this.setState({
+                loadComplete: true,
+                employee: this.props.employee,
+            });
+        }
+
+        if (prevProps.saveInProgress && !this.props.saveInProgress) {
+            this.props.hidePageLoader();
+        }
+    }
+
+    ensureDataLoaded() {
+        this.props.showPageLoader();
         if (this.isNewEmployee()) {
             this.props.newEmployee();
         } else {
             this.props.fetchEmployee(this.props.id);
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if ((!prevState.loadComplete && this.state.loadComplete)
-            || (prevProps.employee.saveInProgress && !this.props.employee.saveInProgress)) {
-            this.props.hidePageLoader();
         }
     }
 
@@ -249,18 +255,32 @@ export class Edit extends Component {
 
 Edit.propTypes = {
     id: PropTypes.number,
-    employee: PropTypes.object.isRequired,
+    employee: PropTypes.object,
 }
 
 export default connect(
     (state, ownProps) => {
-        const employee = ownProps.id ? employeeFullSelector(state, ownProps.id) : employeeNewSelector(state);
-        const catalogs = employeeCatalogs.reduce((obj, name) => {
-            obj[name] = state.catalogs[name];
-            return obj;
-        }, {});
+        let isReadySelector;
+        let employeeSelector;
+        if (ownProps.id) {
+            isReadySelector = isEmployeeReadySelector;
+            employeeSelector = employeeFullSelector;
+        } else {
+            isReadySelector = isNewEmployeeReadySelector;
+            employeeSelector = employeeNewSelector;
+        }
 
-        return { employee, catalogs };
+        const isReady = isReadySelector(state);
+        if (!isReady) {
+            return { loadComplete: false };
+        }
+
+        return {
+            loadComplete: true,
+            saveInProgress: state.employee && state.employee.saving,
+            employee: employeeSelector(state),
+            catalogs: employeeCatalogsSelector(state),
+        }
     },
     { ...pageLoaderActions, fetchEmployee, saveEmployee, newEmployee, fetchCatalog, showWarningAlert }
 )(Edit);

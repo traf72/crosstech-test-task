@@ -1,4 +1,5 @@
 import { appName } from '../constants';
+import { createSelector } from 'reselect';
 import { takeEvery, takeLatest, takeLeading, put, call, select, all } from 'redux-saga/effects';
 import { getEmployee, createEmployee, editEmployee } from '../api';
 import { push } from 'connected-react-router';
@@ -20,8 +21,6 @@ export const FETCH_SUCCESS = `${appName}/${moduleName}/FETCH_SUCCESS`;
 export const FETCH_FAILED = `${appName}/${moduleName}/FETCH_FAILED`;
 
 export const employeeCatalogs = [POSITIONS, SEX];
-
-const cacheTimeoutInSeconds = 60;
 
 const initialState = {
     loading: false,
@@ -205,28 +204,34 @@ export const saga = function* () {
     ]);
 };
 
-const isEmployeeActual = employee => {
-    return employee.loadComplete && !employee.error && (now() - employee.loadTime) / 1000 < cacheTimeoutInSeconds;
-};
+const isCatalogsLoaded = allCatalogs =>
+    employeeCatalogs.every(c => allCatalogs[c].loadComplete);
 
-const isCatalogsLoaded = allCatalogs => {
-    for (let catalogName of employeeCatalogs) {
-        const catalog = allCatalogs[catalogName];
-        if (!catalog.loadComplete) {
-            return false;
-        }
-    }
-    return true;
-}
+const catalogsSelector = state => state.catalogs;
+const employeeSelector = state => state.employee;
 
-export const employeeNewSelector = state => {
-    if (!isCatalogsLoaded(state.catalogs)) {
-        return { loadComplete: false };
-    }
+export const employeeCatalogsSelector = createSelector(
+    catalogsSelector,
+    catalogs =>
+        employeeCatalogs.reduce((acc, name) => {
+            acc[name] = catalogs[name];
+            return acc;
+        }, {})
+);
 
-    return {
-        loadComplete: true,
-        isActual: true,
+export const isNewEmployeeReadySelector = createSelector(
+    catalogsSelector,
+    catalogs => isCatalogsLoaded(catalogs)
+);
+
+export const isEmployeeReadySelector = createSelector(
+    catalogsSelector,
+    employeeSelector,
+    (catalogs, employee) => employee.loadComplete && isCatalogsLoaded(catalogs)
+);
+
+export const employeeNewSelector = createSelector(
+    () => ({
         id: 0,
         firstName: '',
         patronymic: '',
@@ -235,36 +240,27 @@ export const employeeNewSelector = state => {
         birtDate: null,
         position: null,
         phone: '',
-    }
-};
+    })
+);
 
-export const employeeFullSelector = (state, id) => {
-    const { employee, catalogs: allCatalogs } = state;
+export const employeeFullSelector = createSelector(
+    catalogsSelector,
+    employeeSelector,
+    (catalogs, employee) => {
+        const getCatalogItem = (catalogName, itemId) => {
+            return itemId && catalogs[catalogName].indexedData[itemId];
+        }
 
-    if (!employee.loadComplete || !isCatalogsLoaded(state.catalogs)) {
-        return { loadComplete: false };
+        const payload = employee.data != null ? employee.data : {};
+        return {
+            id: payload.id || 0,
+            firstName: payload.firstName || '',
+            patronymic: payload.patronymic || '',
+            lastName: payload.lastName || '',
+            sex: payload.sex ? getCatalogItem(SEX, payload.sex) : null,
+            birthDate: payload.birthDate ? new Date(payload.birthDate) : null,
+            position: payload.position ? getCatalogItem(POSITIONS, payload.position.id) : null,
+            phone: payload.phone || '',
+        }
     }
-
-    const getCatalogItem = (catalogName, itemId) => {
-        return itemId && allCatalogs[catalogName].indexedData[itemId];
-    }
-
-    if (employee.data == null) {
-        return employeeNewSelector(state);
-    }
-
-    const payload = employee.data;
-    return {
-        loadComplete: true,
-        isActual: id === payload.id && isEmployeeActual(employee),
-        saveInProgress: employee.saving,
-        id: payload.id,
-        firstName: payload.firstName,
-        patronymic: payload.patronymic,
-        lastName: payload.lastName,
-        sex: getCatalogItem(SEX, payload.sex),
-        birthDate: payload.birthDate ? new Date(payload.birthDate) : null,
-        position: getCatalogItem(POSITIONS, payload.position.id),
-        phone: payload.phone,
-    }
-};
+);
