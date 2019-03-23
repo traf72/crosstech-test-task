@@ -1,7 +1,14 @@
+// @flow
+
 import React from 'react';
 import { Spinner } from 'reactstrap';
 
-const LoadingComponent = ({ loading, loadingText }) => {
+type Props = {|
+    loading: boolean,
+    loadingText: string,
+|}
+
+const LoadingComponent = ({ loading, loadingText }: Props) => {
     if (!loading) {
         return null;
     }

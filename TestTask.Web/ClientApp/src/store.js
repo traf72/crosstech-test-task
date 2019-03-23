@@ -1,3 +1,6 @@
+// @flow
+
+import type { State, Action, Dispatch } from './flow/redux';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga'
@@ -18,7 +21,7 @@ if (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION_
     composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 }
 
-const store = createStore(
+const store = createStore<State, Action, Dispatch>(
     rootReducer,
     undefined,
     composeEnhancers(applyMiddleware(...middleware))

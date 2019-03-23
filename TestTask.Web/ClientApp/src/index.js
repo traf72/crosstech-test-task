@@ -1,6 +1,9 @@
+// @flow
+
+// $FlowIgnore
+import 'bootstrap/dist/css/bootstrap.css';
 import './index.scss';
 import './polyfills';
-import 'bootstrap/dist/css/bootstrap.css';
 import './libs/font-awesome';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -10,11 +13,14 @@ import history from './history';
 import store from './store';
 import App from './App';
 
-ReactDOM.render(
-    <Provider store={store}>
-        <ConnectedRouter history={history}>
-            <App />
-        </ConnectedRouter>
-    </Provider>,
-    document.getElementById('root')
-);
+const root = document.getElementById('root')
+if (root) {
+    ReactDOM.render(
+        <Provider store={store}>
+            <ConnectedRouter history={history}>
+                <App />
+            </ConnectedRouter>
+        </Provider>,
+        root
+    );
+}

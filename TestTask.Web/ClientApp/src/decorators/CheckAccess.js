@@ -1,12 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
 
-export default Component => class CheckAccess extends React.Component {
-    static propTypes = {
-        allowedRoles: PropTypes.arrayOf(PropTypes.string),
-        userRoles: PropTypes.arrayOf(PropTypes.string),
-    }
+import * as React from 'react';
 
+export type Props = {
+    allowedRoles: string[],
+    userRoles: string[],
+};
+
+export default (Component: React.ComponentType<any>) => class CheckAccess extends React.Component<Props> {
     static defaultProps = {
         allowedRoles: [],
         userRoles: [],

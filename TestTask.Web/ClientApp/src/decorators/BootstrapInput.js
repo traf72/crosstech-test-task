@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
 
-export default RawInput => class BootstrapInput extends Component {
-    static propTypes = {
-        noBootstrap: PropTypes.bool,
-        bsSize: PropTypes.oneOf(['sm', 'lg']),
-        invalid: PropTypes.bool,
-    }
+import * as React from 'react';
 
+type Props = {
+    noBootstrap?: boolean,
+    bsSize?: 'sm' | 'lg',
+    invalid?: boolean,
+    className: string,
+};
+
+export default (RawInput: React.ComponentType<any>) => class BootstrapInput extends React.Component<Props> {
     static defaultProps = {
         className: '',
     }

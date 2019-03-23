@@ -1,12 +1,16 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
 
-export default OriginalComponent => class EnsureUserLoaded extends Component {
-    static propTypes = {
-        auth: PropTypes.object.isRequired,
-        fetchUser: PropTypes.func.isRequired,
-    }
+import type { Action } from '../flow/redux';
+import type { AuthState } from '../ducks/Auth/flow';
 
+import * as React from 'react';
+
+export type Props = {
+    auth: AuthState,
+    fetchUser: () => Action,
+};
+
+export default (OriginalComponent: React.ComponentType<any>) => class EnsureUserLoaded extends React.Component<Props> {
     componentDidMount() {
         this.ensureUserLoaded();
     }

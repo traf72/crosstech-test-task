@@ -1,7 +1,13 @@
+// @flow
+
+import type { State as ReduxState } from '../../flow/redux';
+import type { Employee } from '../../ducks/Employee/flow';
+import type { CatalogsState } from '../../ducks/Catalog/flow';
+import type { EmployeeToSave } from '../../api/flow';
+
 import './Edit.scss';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Form, Col, FormGroup, Label, Input } from 'reactstrap';
 import InputMask from '../common/InputMask';
 import Button from '../common/Button/';
@@ -18,19 +24,47 @@ import { allActions as pageLoaderActions } from '../../ducks/PageLoader';
 import { phoneMask } from '../../constants';
 import { requireValidator, phoneValidator, dateRangeValidator } from '../../libs/validators';
 
+type Props = {|
+    id: ?number,
+    loadComplete: boolean,
+    saveInProgress?: boolean,
+    employee?: Employee,
+    catalogs?: CatalogsState,
+    fetchEmployee: typeof fetchEmployee,
+    saveEmployee: typeof saveEmployee,
+    newEmployee: typeof newEmployee,
+    fetchCatalog: typeof fetchCatalog,
+    showWarningAlert: typeof showWarningAlert,
+    ...typeof pageLoaderActions
+|};
+
+type State = {|
+    employee: $Shape<Employee>,
+    loadComplete: boolean,
+    isFormSubmitted: boolean,
+|};
+
 const birthDateLimitStart = new Date(1940, 0, 1);
 const birthDateLimitEnd = new Date(2005, 11, 31);
 
-export class Edit extends Component {
-    constructor(props) {
+export class Edit extends Component<Props, State> {
+    isFormValid: ?boolean;
+    errors: {
+        [errorKey: string]: string
+    };
+
+    errors = {};
+
+    constructor(props: Props) {
         super(props);
 
         const loadComplete = this.isNewEmployee() ? props.loadComplete : false;
         this.state = {
+            // $FlowIgnore
             employee: loadComplete ? props.employee : {},
             loadComplete,
             isFormSubmitted: false,
-        }
+        };
     }
 
     componentDidMount() {
@@ -41,7 +75,7 @@ export class Edit extends Component {
         this.ensureDataLoaded();
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: Props) {
         if (prevProps.id !== this.props.id) {
             this.setState({
                 loadComplete: false,
@@ -70,35 +104,39 @@ export class Edit extends Component {
         if (this.isNewEmployee()) {
             this.props.newEmployee();
         } else {
+            // $FlowIgnore
             this.props.fetchEmployee(this.props.id);
         }
     }
 
-    isNewEmployee() {
+    isNewEmployee(): boolean {
         return !this.props.id;
     }
 
-    getEmployeeToSave = () => {
+    getEmployeeToSave = (): EmployeeToSave => {
         const employee = this.state.employee;
         return {
             id: employee.id,
             firstName: employee.firstName,
             patronymic: employee.patronymic,
             lastName: employee.lastName,
+            // $FlowIgnore
             sex: employee.sex.id,
+            // $FlowIgnore
             position: { id: employee.position.id },
+            // $FlowIgnore
             birthDate: employee.birthDate,
             phone: employee.phone,
         };
     }
 
-    filterNotRussianSymbols(e) {
+    filterNotRussianSymbols(e: SyntheticKeyboardEvent<HTMLInputElement>) {
         if (!/[А-Яа-яЁё-]/.test(e.key)) {
             e.preventDefault();
         }
     }
 
-    handleStateChange = (key, value) => {
+    handleStateChange = (key: string, value: any) => {
         this.setState(state => {
             const employee = {
                 ...state.employee,
@@ -111,31 +149,31 @@ export class Edit extends Component {
         });
     }
 
-    isInputInvalid = (inputStateKey, validators, inputErrorKey) => {
+    isInputInvalid = (inputStateKey: string, validators: Array<any => ?string>, inputErrorKey?: string) => {
         if (!this.state.isFormSubmitted) {
             return false;
         }
 
         const errorKey = inputErrorKey || this.getInputErrorKey(inputStateKey);
         for (let validate of validators) {
-            this[errorKey] = validate(this.state.employee[inputStateKey]);
-            if (this[errorKey]) {
+            this.errors[errorKey] = validate(this.state.employee[inputStateKey]);
+            if (this.errors[errorKey]) {
                 this.isFormValid = false;
                 return true;
             }
         }
     }
 
-    getInputErrorKey(inputStateKey) {
+    getInputErrorKey(inputStateKey: string) {
         return `${inputStateKey}_error`;
     }
 
-    getInputErrorMessage = (inputStateKey, inputErrorKey) => {
+    getInputErrorMessage = (inputStateKey: string, inputErrorKey?: string) => {
         const errorKey = inputErrorKey || this.getInputErrorKey(inputStateKey);
-        return this[errorKey];
+        return this.errors[errorKey];
     }
 
-    onSubmit = e => {
+    onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         this.isFormValid = true;
         this.setState({ isFormSubmitted: true }, () => {
@@ -153,6 +191,8 @@ export class Edit extends Component {
             return null;
         }
 
+        const { catalogs = {} } = this.props;
+        
         return (
             <Form className="employee-edit" onSubmit={this.onSubmit} autoComplete="off" noValidate>
                 <FormGroup row>
@@ -198,7 +238,7 @@ export class Edit extends Component {
                             inputId="sex"
                             value={this.state.employee.sex}
                             onChange={item => this.handleStateChange('sex', item)}
-                            options={this.props.catalogs[SEX].data}
+                            options={catalogs[SEX].data}
                             catalog
                             invalid={this.isInputInvalid('sex', [requireValidator('Выберите пол')])}
                         />
@@ -212,7 +252,7 @@ export class Edit extends Component {
                             inputId="position"
                             value={this.state.employee.position}
                             onChange={item => this.handleStateChange('position', item)}
-                            options={this.props.catalogs[POSITIONS].data}
+                            options={catalogs[POSITIONS].data}
                             catalog
                             invalid={this.isInputInvalid('position', [requireValidator('Выберите должность')])}
                         />
@@ -253,13 +293,19 @@ export class Edit extends Component {
     }
 };
 
-Edit.propTypes = {
-    id: PropTypes.number,
-    employee: PropTypes.object,
-}
+type OwnProps = {|
+    id: ?number
+|};
 
-export default connect(
-    (state, ownProps) => {
+type StateProps = {|
+    loadComplete: boolean,
+    saveInProgress?: boolean,
+    employee?: Employee,
+    catalogs?: CatalogsState,
+|};
+
+export default connect<Props, OwnProps, _, _, ReduxState, _>(
+    (state, ownProps): StateProps => {
         let isReadySelector;
         let employeeSelector;
         if (ownProps.id) {

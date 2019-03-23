@@ -1,9 +1,18 @@
+// @flow
+
 import './Select.scss';
 import React from 'react';
-import PropTypes from 'prop-types';
 import ReactSelect, { components } from 'react-select';
 
-const Select = props => {
+type Props = {
+    className: string,
+    bsSize?: 'sm' | 'lg',
+    invalid?: boolean,
+    catalog?: boolean,
+    multi?: boolean,
+}
+
+const Select = (props: Props) => {
     const { className, bsSize, invalid, catalog, ...rest } = props;
 
     function getClass() {
@@ -43,12 +52,6 @@ const Select = props => {
         />
     );
 };
-
-Select.propTypes = {
-    bsSize: PropTypes.oneOf(['sm', 'lg']),
-    catalog: PropTypes.bool,
-    invalid: PropTypes.bool,
-}
 
 Select.defaultProps = {
     className: '',

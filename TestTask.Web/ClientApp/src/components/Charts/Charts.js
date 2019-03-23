@@ -1,3 +1,8 @@
+// @flow
+
+import type { State } from '../../flow/redux';
+import type { ReportsState } from '../../ducks/Reports/flow';
+
 import './Charts.scss';
 import React, { Component } from 'react';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
@@ -6,16 +11,21 @@ import { connect } from 'react-redux';
 import { fetchReport, EMPLOYEES_COUNT_BY_SEX, EMPLOYEES_COUNT_BY_DECADES } from '../../ducks/Reports';
 import { sex as sexEnum } from '../../enums'
 
+type Props = {|
+    charts: ReportsState,
+    fetchReport: typeof fetchReport,
+|};
+
 const width = 400;
 const height = 400;
 const allReports = [EMPLOYEES_COUNT_BY_SEX, EMPLOYEES_COUNT_BY_DECADES];
 
-class Charts extends Component {
+class Charts extends Component<Props> {
     componentDidMount() {
         allReports.forEach(r => this.props.fetchReport(r));
     }
 
-    renderChart(title, loadComplete, renderFunc) {
+    renderChart(title: string, loadComplete: boolean, renderFunc: () => React$Element<any>) {
         return (
             <div style={{width, height}} className="charts-chart d-inline-block text-center">
                 <h5>{title}</h5>
@@ -70,7 +80,7 @@ class Charts extends Component {
     }
 }
 
-export default connect(state => {
+export default connect<Props, void, _, _, State, _>((state: State) => {
     return {
         charts: state.reports
     };

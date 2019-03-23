@@ -1,6 +1,10 @@
+// @flow
+
+import type { State, Dispatch } from '../../flow/redux'
+import type { Route } from '../../routes'
+
 import './Layout.scss';
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Container, Row } from 'reactstrap';
 import { connect } from 'react-redux';
 import NavMenu from '../NavMenu';
@@ -8,8 +12,15 @@ import Sidebar from '../Sidebar';
 import { PageLoader } from '../common/Loader';
 import allRoutes, { isPathMatch } from '../../routes';
 
-const Layout = ({ children, path }) => {
-    const route = Object.values(allRoutes).find(r => isPathMatch(path, r.url));
+type Props = {|
+    children: React.Node,
+    path: string,
+    dispatch: Dispatch,
+|};
+
+const Layout = ({ children, path }: Props) => {
+    let route = Object.values(allRoutes).find((r: any) => isPathMatch(path, r.url));
+    route = ((route: any): Route);
 
     return (
         <div>
@@ -30,11 +41,11 @@ const Layout = ({ children, path }) => {
     );
 };
 
-Sidebar.propTypes = {
-    path: PropTypes.string,
-}
+type OwnProps = {|
+    children: React.Node,
+|};
 
-export default connect(state => {
+export default connect<Props, OwnProps, _, _, State, _>(state => {
     return {
         'path': state.router.location.pathname,
     };

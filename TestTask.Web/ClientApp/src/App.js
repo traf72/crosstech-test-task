@@ -1,5 +1,7 @@
-import React, { Fragment } from 'react';
-import { Route, Switch } from 'react-router';
+// @flow
+
+import * as React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Layout from './components/Layout';
 import Alert from './components/common/Alert';
 import PrivateRoute from './components/PrivateRoute';
@@ -11,9 +13,10 @@ import NotFound from './components/NotFound';
 import { home, employee, charts, signIn } from './routes';
 
 export default () => {
-    function renderComponent(Component, withLayout = true) {
+    function renderComponent(Component: React.ComponentType<any>, withLayout = true) {
         if (withLayout) {
             return (
+                // $FlowIgnore
                 <Layout>
                     {Component && <Component />}
                 </Layout>
@@ -24,15 +27,17 @@ export default () => {
     }
 
     return (
-        <Fragment>
-            <Switch>
-                <Route path={signIn.url} exact={signIn.exact} render={route => renderComponent(SignIn, false)} />
-                <PrivateRoute path={home.url} exact={home.exact} render={route => renderComponent(Employees)} />
-                <PrivateRoute path={employee.url} exact={employee.exact} render={route => renderComponent(EmployeeRoutes)} />
-                <PrivateRoute path={charts.url} exact={charts.exact} render={route => renderComponent(Charts)} />
-                <PrivateRoute render={route => renderComponent(NotFound)} />
-            </Switch>
+        <React.Fragment>
+            <BrowserRouter>
+                <Switch>
+                    <Route path={signIn.url} exact={signIn.exact} render={route => renderComponent(SignIn, false)} />
+                    <PrivateRoute path={home.url} exact={home.exact} render={route => renderComponent(Employees)} />
+                    <PrivateRoute path={employee.url} exact={employee.exact} render={route => renderComponent(EmployeeRoutes)} />
+                    <PrivateRoute path={charts.url} exact={charts.exact} render={route => renderComponent(Charts)} />
+                    <PrivateRoute render={route => renderComponent(NotFound)} />
+                </Switch>
+            </BrowserRouter>
             <Alert />
-        </Fragment>
+        </React.Fragment>
     );
 }

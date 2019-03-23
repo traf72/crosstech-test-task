@@ -1,10 +1,18 @@
-import { appName } from '../constants';
-import { getCatalog } from '../api';
+// @flow
+
+import type { Saga } from 'redux-saga';
+import type { $AxiosXHR } from 'axios';
+import type { Catalog } from '../../flow/common';
+import type { Action, State } from '../../flow/redux';
+import type { CatalogState, CatalogsState, CatalogParams, FetchCatalogAction, FetchStartAction, FetchSuccessAction, FetchFailedAction } from './flow';
+
 import { takeEvery, put, call, select, all } from 'redux-saga/effects';
-import { mapEnumToCatalog, shallowEqual, indexArray } from '../utils';
-import { sex as sexEnum } from '../enums';
-import { showErrorAlert } from './Alert';
-import RequestError from '../RequestError';
+import { appName } from '../../constants';
+import { getCatalog } from '../../api';
+import { mapEnumToCatalog, shallowEqual, indexArray } from '../../utils';
+import { sex as sexEnum } from '../../enums';
+import { showErrorAlert } from '../Alert';
+import RequestError from '../../RequestError';
 
 export const POSITIONS = 'positions';
 export const SEX = 'sexCatalog';
@@ -17,7 +25,7 @@ export const FETCH_FAILED = `${appName}/${moduleName}/FETCH_FAILED`;
 
 const sexCatalog = mapEnumToCatalog(sexEnum);
 
-const catalogInitialState = {
+const catalogInitialState: CatalogState = {
     loading: false,
     loadComplete: false,
     data: [],
@@ -25,18 +33,22 @@ const catalogInitialState = {
     error: '',
 };
 
-const enumCatalogInitialState = {
+const enumCatalogInitialState: CatalogState = {
     ...catalogInitialState,
     loadComplete: true,
 };
 
-const initialState = {
+const initialState: CatalogsState = {
     [POSITIONS]: catalogInitialState,
-    [SEX]: { ...enumCatalogInitialState, data: sexCatalog, indexedData: indexArray(sexCatalog) },
+    [SEX]: {
+        ...enumCatalogInitialState,
+        data: sexCatalog,
+        indexedData: indexArray(sexCatalog),
+    },
 };
 
-export default function reducer(state = initialState, action) {
-    const { type, payload, error } = action;
+export default function reducer(state: CatalogsState = initialState, action: Action): CatalogsState {
+    const { type, payload = {}, error } = action;
     switch (type) {
         case FETCH_START:
             return {
@@ -67,7 +79,7 @@ export default function reducer(state = initialState, action) {
                     ...catalogInitialState,
                     loadComplete: true,
                     params: payload.params,
-                    error: error.message,
+                    error: error && error.message,
                 },
             };
 
@@ -76,28 +88,28 @@ export default function reducer(state = initialState, action) {
     }
 };
 
-export const fetchCatalog = (catalogName, params) => {
+export const fetchCatalog = (catalogName: string, params?: CatalogParams): FetchCatalogAction => {
     return {
         type: FETCH_REQUEST,
         payload: { catalogName, params },
     }
 }
 
-export const fetchStart = (catalogName, params) => {
+export const fetchStart = (catalogName: string, params?: CatalogParams): FetchStartAction => {
     return {
         type: FETCH_START,
         payload: { catalogName, params },
     }
 }
 
-export const fetchSuccess = (catalogName, data, params) => {
+export const fetchSuccess = (catalogName: string, data: Catalog, params?: CatalogParams): FetchSuccessAction => {
     return {
         type: FETCH_SUCCESS,
         payload: { catalogName, data, params }
     }
 }
 
-export const fetchFailed = (catalogName, error, params) => {
+export const fetchFailed = (catalogName: string, error: Error, params?: CatalogParams): FetchFailedAction => {
     return {
         type: FETCH_FAILED,
         payload: { catalogName, params },
@@ -109,9 +121,9 @@ export const allActions = {
     fetchCatalog, fetchStart, fetchSuccess, fetchFailed
 };
 
-const fetchCatalogSaga = function* (action) {
+const fetchCatalogSaga = function* (action: FetchCatalogAction) : Saga<void>  {
     const { catalogName, params } = action.payload;
-    const state = yield select();
+    const state: State = yield select();
     const catalog = state.catalogs[catalogName];
     if (catalog == null) {
         console.error(`Catalog ${catalogName} does not exist`);
@@ -124,9 +136,9 @@ const fetchCatalogSaga = function* (action) {
 
     yield put(fetchStart(catalogName, params));
 
-    const isRequestActual = state => state.catalogs[catalogName].params === params;
+    const isRequestActual = (state: State): boolean => state.catalogs[catalogName].params === params;
     try {
-        const response = yield call(getCatalog, catalogName, params);
+        const response: $AxiosXHR<Catalog> = yield call(getCatalog, catalogName, params);
         if (isRequestActual(yield select())) {
             yield put(fetchSuccess(catalogName, response.data, params));
         }
@@ -141,6 +153,6 @@ const fetchCatalogSaga = function* (action) {
     }
 }
 
-export const saga = function* () {
+export const saga = function* (): Saga<void> {
     yield takeEvery(FETCH_REQUEST, fetchCatalogSaga);
 }

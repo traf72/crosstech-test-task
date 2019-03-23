@@ -1,10 +1,19 @@
+// @flow
+
+import type { State, Dispatch } from '../../../flow/redux';
+
 import './PageLoader.scss';
 import React from 'react';
-import PropTypes from 'prop-types';
 import Loader from './Loader';
 import { connect } from 'react-redux';
 
-const PageLoader = ({ visible, showOverlay }) => {
+type Props = {|
+    visible: boolean,
+    showOverlay: boolean,
+    dispatch: Dispatch,
+|};
+
+const PageLoader = ({ visible, showOverlay }: Props) => {
     if (!visible) {
         return null;
     }
@@ -21,11 +30,6 @@ const PageLoader = ({ visible, showOverlay }) => {
     );
 }
 
-PageLoader.propTypes = {
-    visible: PropTypes.bool,
-    showOverlay: PropTypes.bool,
-};
-
-export default connect(state => {
+export default connect<Props, any, _, _, State, _>(state => {
     return state.pageLoader;
 })(PageLoader);

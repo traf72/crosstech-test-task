@@ -1,13 +1,19 @@
-import { generatePath, matchPath } from 'react-router';
+// @flow
 
-class Route {
-    constructor(url, title, exact) {
+import { generatePath, matchPath } from 'react-router-dom';
+
+export class Route {
+    url: string;
+    title: string;
+    exact: boolean | void;
+
+    constructor(url: string, title: string, exact?: boolean) {
         this.url = url;
         this.title = title;
         this.exact = exact;
     }
 
-    buildUrl(params) {
+    buildUrl(params?: Object) {
         if (!params) {
             return this.url;
         }
@@ -16,7 +22,8 @@ class Route {
     }
 }
 
-export const isPathMatch = (path, route, options = { exact: true, strict: false }) => {
+export const isPathMatch = (path: string, route: string,
+    options: { exact?: boolean, strict?: boolean } = { exact: true, strict: false }) => {
     const routeObj = {
         path: route,
         ...options

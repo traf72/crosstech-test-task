@@ -1,3 +1,9 @@
+// @flow
+
+import type { State as ReduxState } from '../../flow/redux';
+import type { AuthState } from '../../ducks/Auth/flow';
+import type { Props as ConnectProps } from '../../decorators/EnsureUserLoaded';
+
 import './SignIn.scss';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
@@ -9,22 +15,33 @@ import { signIn, fetchUser } from '../../ducks/Auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { home as homeRoute } from '../../routes';
 
-class SignIn extends Component {
+type Props = {|
+    auth: AuthState,
+    signIn: typeof signIn,
+|};
+
+type State = {|
+    login: string,
+    password: string,
+    rememberMe: boolean,
+|};
+
+class SignIn extends Component<Props, State> {
     state = {
         login: '',
         password: '',
         rememberMe: true,
     }
 
-    onChange = e => {
-        this.setState({ [e.target.name]: e.target.value });
+    onChange = (e: SyntheticEvent<HTMLInputElement>) => {
+        this.setState({ [e.currentTarget.name]: e.currentTarget.value });
     }
 
-    onRememberMeChanged = e => {
-        this.setState({ rememberMe: !e.target.checked });
+    onRememberMeChanged = (e: SyntheticEvent<HTMLInputElement>) => {
+        this.setState({ rememberMe: !e.currentTarget.checked });
     }
 
-    onSubmit = e => {
+    onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const { login, password, rememberMe } = this.state;
@@ -83,7 +100,7 @@ class SignIn extends Component {
     }
 }
 
-export default connect(state => {
+export default connect<ConnectProps, any, _, _, ReduxState, _>(state => {
     return {
         auth: state.auth,
     }

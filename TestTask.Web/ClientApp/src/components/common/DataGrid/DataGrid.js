@@ -1,16 +1,22 @@
+// @flow
+
 import './DataGrid.scss';
 import React from 'react';
-import PropTypes from 'prop-types';
 import ReactTable from 'react-table';
+// $FlowIgnore
 import 'react-table/react-table.css';
 import NoDataComponent from './NoDataComponent';
 import LoadingComponent from './LoadingComponent';
 
-const DataGrid = (props) => {
+type Props = {
+    className: string
+}
+
+const DataGrid = (props: Props) => {
     const { className, ...rest } = props;
     const resultClass = `${className} data-grid -highlight`;
 
-    function getNoDataProps({ loading }) {
+    function getNoDataProps({ loading }: { loading: boolean }) {
         return { loading };
     }
 
@@ -33,10 +39,6 @@ const DataGrid = (props) => {
             {...rest}
         />
     );
-}
-
-DataGrid.propTypes = {
-    className: PropTypes.string,
 }
 
 DataGrid.defaultProps = {

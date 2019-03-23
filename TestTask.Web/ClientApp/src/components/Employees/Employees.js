@@ -1,3 +1,8 @@
+// @flow
+
+import type { State } from '../../flow/redux';
+import type { Employee } from '../../ducks/Employees/flow';
+
 import React, { Component } from 'react';
 import DataGrid from '../common/DataGrid';
 import Button from '../common/Button';
@@ -9,7 +14,15 @@ import { connect } from 'react-redux';
 import { fetch, deleteEmployee, selector } from '../../ducks/Employees';
 import { allActions as pageLoaderActions } from '../../ducks/PageLoader';
 
-class Employees extends Component {
+type Props = {|
+    loadComplete: boolean,
+    employees: Employee[],
+    fetch: typeof fetch,
+    deleteEmployee: typeof deleteEmployee,
+    ...typeof pageLoaderActions,
+|};
+
+class Employees extends Component<Props> {
     columns = [
         {
             Header: 'Имя',
@@ -36,7 +49,7 @@ class Employees extends Component {
         },
         {
             Header: 'Должность',
-            accessor: 'position.name',
+            accessor: 'position',
             minWidth: 150,
             maxWidth: 250,
         },
@@ -44,7 +57,7 @@ class Employees extends Component {
             Header: 'Дата рождения',
             accessor: 'birthDate',
             width: 110,
-            Cell: e => <span>{e.original.birthDate.toLocaleDateString()}</span>,
+            Cell: (e: any) => <span>{e.original.birthDate.toLocaleDateString()}</span>,
         },
         {
             Header: 'Телефон',
@@ -55,7 +68,7 @@ class Employees extends Component {
             Header: '',
             accessor: '',
             width: 45,
-            Cell: e => (
+            Cell: (e: any)  => (
                 <ProtectedComponent allowedRoles={['Admin']}>
                     <Link to={editEmployee.buildUrl({ id: e.original.id })}>
                         <FontAwesomeIcon icon="edit" />
@@ -71,7 +84,7 @@ class Employees extends Component {
         this.props.fetch();
     }
 
-    deleteEmp(id) {
+    deleteEmp(id: number) {
         if (window.confirm('Сотрудник будет удалён, продолжить?')) {
             this.props.deleteEmployee(id);
         }
@@ -98,7 +111,7 @@ class Employees extends Component {
     }
 }
 
-export default connect(state => {
+export default connect<Props, void, _, _, State, _>(state => {
     return {
         loadComplete: state.employees.loadComplete,
         employees: selector(state),

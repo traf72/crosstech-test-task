@@ -1,13 +1,22 @@
+// @flow
+
+import type { State, Dispatch } from '../../flow/redux';
+
 import './Sidebar.scss';
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { connect } from 'react-redux';
 import { sidebarRoutes as routes, isPathMatch }  from '../../routes';
 
-const Sidebar = ({ className, path }) => {
+type Props = {|
+    className: string,
+    path: string,
+    dispatch: Dispatch,
+|};
+
+const Sidebar = ({ className, path }: Props) => {
     function getNavLink(url, icon, title) {
         return <NavLink tag={Link} active={isPathMatch(path, url)} to={url}><FontAwesomeIcon icon={icon} fixedWidth />{title}</NavLink>;
     }
@@ -27,19 +36,17 @@ const Sidebar = ({ className, path }) => {
     );
 }
 
-Sidebar.propTypes = {
-    className: PropTypes.string,
-    path: PropTypes.string,
-}
-
 Sidebar.defaultProps = {
     className: '',
 }
 
-export default connect(
-    state => {
-        return {
-            'path': state.router.location.pathname,
-        }
-    },
+type OwnProps = {|
+    className: string,
+|};
+
+export default connect<Props, OwnProps, _, _, State, _>(state => {
+    return {
+        'path': state.router.location.pathname,
+    }
+},
 )(Sidebar);

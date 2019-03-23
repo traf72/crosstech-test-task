@@ -1,6 +1,13 @@
-import React from 'react';
+// @flow
 
-const NoDataComponent = ({ children, loading }) => {
+import * as React from 'react';
+
+type Props = {|
+    children: React.Node,
+    loading: boolean,
+|}
+
+const NoDataComponent = ({ children, loading }: Props) => {
     if (loading) {
         return null;
     }

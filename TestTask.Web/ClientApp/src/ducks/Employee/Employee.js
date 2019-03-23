@@ -1,13 +1,26 @@
-import { appName } from '../constants';
+// @flow
+
+import type { Saga } from 'redux-saga';
+import type { $AxiosXHR } from 'axios';
+import type { Primitive, CatalogItem } from '../../flow/common';
+import type { Action, State } from '../../flow/redux';
+import type { FetchedEmployee, EmployeeToSave } from '../../api/flow';
+import type { CatalogsState, CatalogState } from '../Catalog/flow';
+import type {
+    EmployeeState, Employee, ReuqestStartAction, RequestSuccessAction,
+    RequestFailedAction, SaveEmployeeAction, FetchEmployeeAction
+} from './flow';
+
+import { push } from 'connected-react-router';
 import { createSelector } from 'reselect';
 import { takeEvery, takeLatest, takeLeading, put, call, select, all } from 'redux-saga/effects';
-import { getEmployee, createEmployee, editEmployee } from '../api';
-import { push } from 'connected-react-router';
-import { home } from '../routes';
-import { POSITIONS, SEX, fetchCatalog } from './Catalog';
-import RequestError from '../RequestError';
-import { showErrorAlert } from './Alert';
-import { now } from '../utils';
+import { appName } from '../../constants';
+import { getEmployee, createEmployee, editEmployee } from '../../api';
+import { home } from '../../routes';
+import { POSITIONS, SEX, fetchCatalog } from '../Catalog';
+import RequestError from '../../RequestError';
+import { showErrorAlert } from '../Alert';
+import { now } from '../../utils';
 
 const moduleName = 'employee';
 export const NEW_EMPLOYEE = `${appName}/${moduleName}/NEW_EMPLOYEE`;
@@ -22,7 +35,7 @@ export const FETCH_FAILED = `${appName}/${moduleName}/FETCH_FAILED`;
 
 export const employeeCatalogs = [POSITIONS, SEX];
 
-const initialState = {
+const initialState: EmployeeState = {
     loading: false,
     loadComplete: false,
     loadTime: new Date(0),
@@ -32,8 +45,8 @@ const initialState = {
     error: '',
 };
 
-export default function reducer(state = initialState, action) {
-    const { type, payload, error } = action;
+export default function reducer(state: EmployeeState = initialState, action: Action): EmployeeState {
+    const { type, payload = {}, error } = action;
     switch (type) {
         case FETCH_START:
             return {
@@ -47,7 +60,7 @@ export default function reducer(state = initialState, action) {
                 loadComplete: true,
                 loadTime: payload.loadTime,
                 id: payload.id,
-                error: error.message,
+                error: error && error.message,
             };
         case SAVE_START:
             return {
@@ -70,7 +83,7 @@ export default function reducer(state = initialState, action) {
                 saving: false,
                 loadTime: payload.loadTime,
                 id: payload.id,
-                error: error.message,
+                error: error && error.message,
             };
 
         default:
@@ -78,27 +91,27 @@ export default function reducer(state = initialState, action) {
     }
 };
 
-export const newEmployee = () => {
+export const newEmployee = (): Action => {
     return {
         type: NEW_EMPLOYEE,
     }
 };
 
-export const saveStart = id => {
+export const saveStart = (id: number): ReuqestStartAction => {
     return {
         type: SAVE_START,
         payload: { id },
     }
 };
 
-export const saveSuccess = (data, loadTime) => {
+export const saveSuccess = (data: FetchedEmployee, loadTime: Date): RequestSuccessAction => {
     return {
         type: SAVE_SUCCESS,
         payload: { data, loadTime },
     }
 };
 
-export const saveFailed = (id, error, loadTime) => {
+export const saveFailed = (id: number, error: Error, loadTime: Date): RequestFailedAction => {
     return {
         type: SAVE_FAILED,
         payload: { id, loadTime },
@@ -106,35 +119,35 @@ export const saveFailed = (id, error, loadTime) => {
     }
 };
 
-export const saveEmployee = employee => {
+export const saveEmployee = (employee: EmployeeToSave): SaveEmployeeAction => {
     return {
         type: SAVE_REQUEST,
         payload: { employee },
     }
 };
 
-export const fetchEmployee = id => {
+export const fetchEmployee = (id: number): FetchEmployeeAction => {
     return {
         type: FETCH_REQUEST,
         payload: { id },
     }
 };
 
-export const fetchStart = (id = 0) => {
+export const fetchStart = (id: number = 0): ReuqestStartAction => {
     return {
         type: FETCH_START,
         payload: { id },
     }
 };
 
-export const fetchSuccess = (data, loadTime) => {
+export const fetchSuccess = (data: FetchedEmployee, loadTime: Date): RequestSuccessAction => {
     return {
         type: FETCH_SUCCESS,
         payload: { data, loadTime },
     }
 };
 
-export const fetchFailed = (id, error, loadTime) => {
+export const fetchFailed = (id: number, error: Error, loadTime: Date): RequestFailedAction => {
     return {
         type: FETCH_FAILED,
         payload: { id, loadTime },
@@ -142,25 +155,25 @@ export const fetchFailed = (id, error, loadTime) => {
     }
 };
 
-export const fetchEmployeeCatalogsSaga = function* () {
+export const fetchEmployeeCatalogsSaga = function* (): Saga<void> {
     yield all(employeeCatalogs.map(c => put(fetchCatalog(c))));
 }
 
-export const saveEmployeeSaga = function* (action) {
+export const saveEmployeeSaga = function* (action: SaveEmployeeAction): Saga<void> {
     const { employee } = action.payload;
     const id = employee.id;
-    const state = yield select();
+    const state: State = yield select();
     const currentLocation = state.router.location;
 
     yield put(saveStart(id));
 
-    const isLocationChanged = state => currentLocation !== state.router.location;
-    const isEmployeeChanged = state => state.employee.id !== id;
+    const isLocationChanged = (state: State): boolean => currentLocation !== state.router.location;
+    const isEmployeeChanged = (state: State): boolean => state.employee.id !== id;
     try {
         const api = id ? editEmployee : createEmployee;
-        const response = yield call(api, employee);
+        const response: $AxiosXHR<FetchedEmployee> = yield call(api, employee);
         const savedEmployee = response.data;
-        const state = yield select();
+        const state: State = yield select();
 
         if (!isEmployeeChanged(state)) {
             yield put(saveSuccess(savedEmployee, now()));
@@ -178,13 +191,13 @@ export const saveEmployeeSaga = function* (action) {
     }
 };
 
-export const fetchEmployeeSaga = function* (action) {
+export const fetchEmployeeSaga = function* (action: FetchEmployeeAction): Saga<void> {
     yield call(fetchEmployeeCatalogsSaga);
 
     const { id } = action.payload;
     yield put(fetchStart(id));
     try {
-        const response = yield call(getEmployee, id);
+        const response: $AxiosXHR<FetchedEmployee> = yield call(getEmployee, id);
         const employeeData = response.data;
         yield put(fetchSuccess(employeeData, now()));
     } catch (error) {
@@ -196,7 +209,7 @@ export const fetchEmployeeSaga = function* (action) {
     }
 };
 
-export const saga = function* () {
+export const saga = function* (): Saga<void> {
     yield all([
         takeLatest(FETCH_REQUEST, fetchEmployeeSaga),
         takeLeading(NEW_EMPLOYEE, fetchEmployeeCatalogsSaga),
@@ -204,13 +217,13 @@ export const saga = function* () {
     ]);
 };
 
-const isCatalogsLoaded = allCatalogs =>
+const isCatalogsLoaded = (allCatalogs: CatalogsState) : boolean =>
     employeeCatalogs.every(c => allCatalogs[c].loadComplete);
 
-const catalogsSelector = state => state.catalogs;
-const employeeSelector = state => state.employee;
+const catalogsSelector = (state: State): CatalogsState => state.catalogs;
+const employeeSelector = (state: State): EmployeeState => state.employee;
 
-export const employeeCatalogsSelector = createSelector(
+export const employeeCatalogsSelector = createSelector<State, void, { [name: string]: CatalogState }, CatalogsState>(
     catalogsSelector,
     catalogs =>
         employeeCatalogs.reduce((acc, name) => {
@@ -219,36 +232,37 @@ export const employeeCatalogsSelector = createSelector(
         }, {})
 );
 
-export const isNewEmployeeReadySelector = createSelector(
+export const isNewEmployeeReadySelector = createSelector<State, void, boolean, CatalogsState>(
     catalogsSelector,
     catalogs => isCatalogsLoaded(catalogs)
 );
 
-export const isEmployeeReadySelector = createSelector(
+export const isEmployeeReadySelector = createSelector<State, void, boolean, CatalogsState, EmployeeState>(
     catalogsSelector,
     employeeSelector,
     (catalogs, employee) => employee.loadComplete && isCatalogsLoaded(catalogs)
 );
 
-export const employeeNewSelector = createSelector(
+export const employeeNewSelector = createSelector<State, void, Employee, true>(
+    state => true,
     () => ({
         id: 0,
         firstName: '',
         patronymic: '',
         lastName: '',
         sex: null,
-        birtDate: null,
+        birthDate: null,
         position: null,
         phone: '',
     })
 );
 
-export const employeeFullSelector = createSelector(
+export const employeeFullSelector = createSelector<State, void, Employee, CatalogsState, EmployeeState>(
     catalogsSelector,
     employeeSelector,
     (catalogs, employee) => {
-        const getCatalogItem = (catalogName, itemId) => {
-            return itemId && catalogs[catalogName].indexedData[itemId];
+        const getCatalogItem = (catalogName: string, itemId?: Primitive): ?CatalogItem => {
+            return itemId ? catalogs[catalogName].indexedData[itemId] : null;
         }
 
         const payload = employee.data != null ? employee.data : {};

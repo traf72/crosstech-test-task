@@ -1,8 +1,15 @@
-import { appName } from '../constants';
-import { getReport } from '../api';
+// @flow
+
+import type { Saga } from 'redux-saga';
+import type { $AxiosXHR } from 'axios';
+import type { Action, State } from '../../flow/redux';
+import type { ReportState, ReportsState, FetchAction, FetchSuccessAction, FetchFailedAction } from './flow';
+
 import { takeEvery, put, call, select, all } from 'redux-saga/effects';
-import { showErrorAlert } from './Alert';
-import RequestError from '../RequestError';
+import { appName } from '../../constants';
+import { getReport } from '../../api';
+import { showErrorAlert } from '../Alert';
+import RequestError from '../../RequestError';
 
 export const EMPLOYEES_COUNT_BY_SEX = 'EmplyeesCountBySex';
 export const EMPLOYEES_COUNT_BY_DECADES = 'EmplyeesCountByDecades';
@@ -13,20 +20,20 @@ export const FETCH_START = `${appName}/${moduleName}/FETCH_START`;
 export const FETCH_SUCCESS = `${appName}/${moduleName}/FETCH_SUCCESS`;
 export const FETCH_FAILED = `${appName}/${moduleName}/FETCH_FAILED`;
 
-const reportInitialState = {
+const reportInitialState: ReportState = {
     loading: false,
     loadComplete: false,
-    data: [],
+    data: {},
     error: '',
 };
 
-const initialState = {
+const initialState: ReportsState = {
     [EMPLOYEES_COUNT_BY_SEX]: reportInitialState,
     [EMPLOYEES_COUNT_BY_DECADES]: reportInitialState,
 };
 
-export default function reducer(state = initialState, action) {
-    const { type, payload, error } = action;
+export default function reducer(state: ReportsState = initialState, action: Action): ReportsState {
+    const { type, payload = {}, error } = action;
     switch (type) {
         case FETCH_START:
             return {
@@ -53,7 +60,7 @@ export default function reducer(state = initialState, action) {
                 [payload.reportName]: {
                     ...reportInitialState,
                     loadComplete: true,
-                    error: error.message,
+                    error: error && error.message,
                 },
             };
 
@@ -62,28 +69,28 @@ export default function reducer(state = initialState, action) {
     }
 };
 
-export const fetchReport = reportName => {
+export const fetchReport = (reportName: string): FetchAction => {
     return {
         type: FETCH_REQUEST,
         payload: { reportName },
     }
 }
 
-export const fetchStart = reportName => {
+export const fetchStart = (reportName: string): FetchAction => {
     return {
         type: FETCH_START,
         payload: { reportName },
     }
 }
 
-export const fetchSuccess = (reportName, data) => {
+export const fetchSuccess = (reportName: string, data: {}): FetchSuccessAction => {
     return {
         type: FETCH_SUCCESS,
         payload: { reportName, data }
     }
 }
 
-export const fetchFailed = (reportName, error) => {
+export const fetchFailed = (reportName: string, error: Error): FetchFailedAction => {
     return {
         type: FETCH_FAILED,
         payload: { reportName },
@@ -95,9 +102,9 @@ export const allActions = {
     fetchReport, fetchStart, fetchSuccess, fetchFailed
 };
 
-const fetchReportSaga = function* (action) {
+const fetchReportSaga = function* (action: FetchAction): Saga<void> {
     const { reportName } = action.payload;
-    const state = yield select();
+    const state: State = yield select();
     const report = state.reports[reportName];
     if (report == null) {
         console.error(`Report ${reportName} does not exist`);
@@ -108,10 +115,10 @@ const fetchReportSaga = function* (action) {
         return;
     }
 
-    yield put(fetchStart(report));
+    yield put(fetchStart(reportName));
 
     try {
-        const response = yield call(getReport, reportName);
+        const response: $AxiosXHR<{}> = yield call(getReport, reportName);
         yield put(fetchSuccess(reportName, response.data));
     } catch (error) {
         const reqError = new RequestError(error, `При загрузке отчёта "${reportName}" произошла ошибка`);
@@ -122,6 +129,6 @@ const fetchReportSaga = function* (action) {
     }
 }
 
-export const saga = function* () {
+export const saga = function* (): Saga<void> {
     yield takeEvery(FETCH_REQUEST, fetchReportSaga);
 }

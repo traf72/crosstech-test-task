@@ -1,8 +1,15 @@
-import './ValidationMessage.scss';
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
 
-const ValidationMessage = ({ className, tag: Tag, children }) => {
+import './ValidationMessage.scss';
+import * as React from 'react';
+
+type Props = {|
+    className: string,
+    tag: string,
+    children: React.Node,
+|};
+
+const ValidationMessage = ({ className, tag: Tag, children }: Props) => {
     if (!children) {
         return null;
     }
@@ -14,11 +21,6 @@ const ValidationMessage = ({ className, tag: Tag, children }) => {
         </Tag>
     );
 };
-
-ValidationMessage.propTypes = {
-    className: PropTypes.string,
-    tag: PropTypes.string,
-}
 
 ValidationMessage.defaultProps = {
     className: '',

@@ -1,9 +1,18 @@
-export const requireValidator = (message = 'Введите значение', options = {}) => {
+// @flow
+
+type ValidIfEmptyOption =  { validIfEmpty: boolean };
+type TrimSpaceStringOption =  { trimSpaceString: boolean };
+
+export type RequireValidatorOptions = TrimSpaceStringOption;
+export type RegexValidatorOptions = ValidIfEmptyOption;
+export type DateRangeValidatorOptions = ValidIfEmptyOption;
+export type ValidateFunc = (value: any) => ?string;
+
+export const requireValidator = (message?: string = 'Введите значение', options?: RequireValidatorOptions = {}): ValidateFunc => {
     const { trimSpaceString = true } = options;
 
-    return value => {
-        let normalizedValue = value || '';
-        normalizedValue = normalizedValue.toString();
+    return (value: any): ?string => {
+        let normalizedValue: string = (value || '').toString();
         if (trimSpaceString) {
             normalizedValue = normalizedValue.trim();
         }
@@ -11,10 +20,10 @@ export const requireValidator = (message = 'Введите значение', op
     }
 }
 
-export const regexValidator = (regex, message = 'Некорректное значение', options = {}) => {
+export const regexValidator = (regex: RegExp, message?: string = 'Некорректное значение', options?: RegexValidatorOptions = {}): ValidateFunc => {
     const { validIfEmpty = true } = options;
 
-    return value => {
+    return (value: any): ?string => {
         if (!regex || (validIfEmpty && isEmpty(value))) {
             return null;
         }
@@ -23,15 +32,15 @@ export const regexValidator = (regex, message = 'Некорректное зна
     }
 }
 
-export const phoneValidator = (message = 'Телефон не соответствует маске', options = {}) => {
+export const phoneValidator = (message: string = 'Телефон не соответствует маске', options: RegexValidatorOptions = {}): ValidateFunc => {
     return regexValidator(/\+7 ?\(?\d{3}\)? ?\d{3}-?\d{2}-?\d{2}/, message, options);
 }
 
-export const dateRangeValidator = (dateStart, dateEnd, message, options = {}) => {
+export const dateRangeValidator = (dateStart: Date, dateEnd: Date, message?: string, options: DateRangeValidatorOptions = {}): ValidateFunc => {
     message = message || `Дата выходит за границы диапазона ${dateStart.toLocaleDateString()}-${dateEnd.toLocaleDateString()}`;
     const { validIfEmpty = true } = options;
 
-    return value => {
+    return (value: any): ?string => {
         if ((validIfEmpty && isEmpty(value)) || (value >= dateStart && value <= dateEnd)) {
             return null;
         }

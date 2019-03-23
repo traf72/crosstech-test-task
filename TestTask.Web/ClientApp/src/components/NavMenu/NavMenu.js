@@ -1,3 +1,8 @@
+// @flow
+
+import type { State as ReduxState } from '../../flow/redux';
+import type { FetchedUser } from '../../api/flow';
+
 import './NavMenu.scss';
 import React from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
@@ -5,7 +10,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { connect } from 'react-redux';
 import { signOut } from '../../ducks/Auth';
 
-class NavMenu extends React.Component {
+type Props = {|
+    user: ?FetchedUser,
+    signOut: typeof signOut,
+|};
+
+type State = {|
+    isOpen: boolean;
+|};
+
+class NavMenu extends React.Component<Props, State> {
     state = {
         isOpen: false
     };
@@ -17,7 +31,7 @@ class NavMenu extends React.Component {
     }
 
     render() {
-        const user = this.props.user;
+        const user = this.props.user || {};
         const userName = `${user.firstName} ${user.lastName}`;
 
         return (
@@ -42,7 +56,7 @@ class NavMenu extends React.Component {
     }
 }
 
-export default connect(state => {
+export default connect<Props, any, _, _, ReduxState, _>(state => {
     return {
         user: state.auth.user
     }

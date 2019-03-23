@@ -1,4 +1,10 @@
-function getErrorMessage(cause, message) {
+// @flow
+
+export type Cause = {
+    response: { status: number }
+}
+
+function getErrorMessage(cause: Cause, message?: string) {
     if (cause.response.status === 401) {
         return 'Ваша сессия авторизации истекла, пожалуйста, обновите страницу';
     } else if (cause.response.status === 403) {
@@ -13,7 +19,9 @@ function getErrorMessage(cause, message) {
 }
 
 export default class RequestError extends Error {
-    constructor(cause, message) {
+    cause: Cause;
+    
+    constructor(cause: Cause, message?: string) {
         super(getErrorMessage(cause, message));
 
         this.cause = cause;

@@ -1,3 +1,6 @@
+// @flow
+
+import type { Action } from './flow/redux';
 import { combineReducers } from 'redux';
 import history from './history';
 import { connectRouter } from 'connected-react-router';
@@ -9,7 +12,7 @@ import employeesReducer from './ducks/Employees';
 import employeeReducer from './ducks/Employee';
 import reportsReducer from './ducks/Reports';
 
-export default combineReducers({
+export default combineReducers<_, Action>({
     router: connectRouter(history),
     catalogs: catalogReducer,
     alert: alertReducer,

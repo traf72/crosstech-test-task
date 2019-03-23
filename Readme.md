@@ -31,6 +31,7 @@
 * Redux-saga
 * [Redux-ducks](https://github.com/erikras/ducks-modular-redux)
 * Bootstrap 4
+* Flow
 
 Проект можно запустить из Visual Studio 2017 (должен быть установлен пакет [.NET Core SDK](https://dotnet.microsoft.com/download)). Восстановление npm-пакетов может занять несколько минут.
 

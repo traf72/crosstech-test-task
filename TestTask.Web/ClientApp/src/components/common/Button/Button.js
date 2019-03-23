@@ -1,10 +1,16 @@
+// @flow
+
 import './Button.scss';
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Button as BootstrapButton } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const Button = ({ icon, children, ...rest }) => {
+export type Props = {
+    icon?: string | [string, string],
+    children: React.Node,
+};
+
+const Button = ({ icon, children, ...rest }: Props) => {
     return (
         <BootstrapButton type="button" {...rest}>
             {icon && <FontAwesomeIcon icon={icon} className="btn-icon" />}
@@ -12,12 +18,5 @@ const Button = ({ icon, children, ...rest }) => {
         </BootstrapButton>
     );
 };
-
-Button.propTypes = {
-    icon: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.array,
-    ]),
-}
 
 export default Button;

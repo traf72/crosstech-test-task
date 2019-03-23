@@ -1,0 +1,24 @@
+declare module 'reactstrap' {
+    declare export var Spinner: React$ComponentType<any>;
+    declare export var Alert: React$ComponentType<any>;
+    declare export var Button: React$ComponentType<any>;
+    declare export var Container: React$ComponentType<any>;
+    declare export var Row: React$ComponentType<any>;
+    declare export var Collapse: React$ComponentType<any>;
+    declare export var Navbar: React$ComponentType<any>;
+    declare export var NavbarBrand: React$ComponentType<any>;
+    declare export var NavbarToggler: React$ComponentType<any>;
+    declare export var Nav: React$ComponentType<any>;
+    declare export var UncontrolledDropdown: React$ComponentType<any>;
+    declare export var DropdownToggle: React$ComponentType<any>;
+    declare export var DropdownMenu: React$ComponentType<any>;
+    declare export var DropdownItem: React$ComponentType<any>;
+    declare export var NavItem: React$ComponentType<any>;
+    declare export var NavLink: React$ComponentType<any>;
+    declare export var Form: React$ComponentType<any>;
+    declare export var Label: React$ComponentType<any>;
+    declare export var Input: React$ComponentType<any>;
+    declare export var CustomInput: React$ComponentType<any>;
+    declare export var Col: React$ComponentType<any>;
+    declare export var FormGroup: React$ComponentType<any>;
+};
