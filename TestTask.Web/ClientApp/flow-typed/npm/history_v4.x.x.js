@@ -1,7 +1,7 @@
 // flow-typed signature: f5c8ded4091b25e23bc26e943c13b429
 // flow-typed version: 6a3fe49a8b/history_v4.x.x/flow_>=v0.25.x
 
-declare module "history/createBrowserHistory" {
+declare module "history" {
   declare function Unblock(): void;
 
   declare export type Action = "PUSH" | "REPLACE" | "POP";
@@ -42,5 +42,5 @@ declare module "history/createBrowserHistory" {
     ) => void,
   };
 
-  declare export default (opts?: HistoryOpts) => BrowserHistory;
+  declare export function createBrowserHistory(opts?: HistoryOpts): BrowserHistory;
 }

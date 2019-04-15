@@ -47,6 +47,6 @@ type OwnProps = {|
 
 export default connect<Props, OwnProps, _, _, State, _>(state => {
     return {
-        'path': state.router.location.pathname,
+        path: state.router.location.pathname,
     };
 })(Layout);

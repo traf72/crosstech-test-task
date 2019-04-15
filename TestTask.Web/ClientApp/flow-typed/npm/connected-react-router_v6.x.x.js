@@ -15,7 +15,7 @@
 
 declare module 'connected-react-router' {
   import type { Middleware, Reducer } from 'redux';
-  import type { BrowserHistory } from 'history/createBrowserHistory';
+  import type { BrowserHistory } from 'history';
 
   declare export var LOCATION_CHANGE: '@@router/LOCATION_CHANGE';
 

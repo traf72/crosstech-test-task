@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Layout from './components/Layout';
 import Alert from './components/common/Alert';
 import PrivateRoute from './components/PrivateRoute';
@@ -28,15 +28,13 @@ export default () => {
 
     return (
         <React.Fragment>
-            <BrowserRouter>
-                <Switch>
-                    <Route path={signIn.url} exact={signIn.exact} render={route => renderComponent(SignIn, false)} />
-                    <PrivateRoute path={home.url} exact={home.exact} render={route => renderComponent(Employees)} />
-                    <PrivateRoute path={employee.url} exact={employee.exact} render={route => renderComponent(EmployeeRoutes)} />
-                    <PrivateRoute path={charts.url} exact={charts.exact} render={route => renderComponent(Charts)} />
-                    <PrivateRoute render={route => renderComponent(NotFound)} />
-                </Switch>
-            </BrowserRouter>
+            <Switch>
+                <Route path={signIn.url} exact={signIn.exact} render={route => renderComponent(SignIn, false)} />
+                <PrivateRoute path={home.url} exact={home.exact} render={route => renderComponent(Employees)} />
+                <PrivateRoute path={employee.url} exact={employee.exact} render={route => renderComponent(EmployeeRoutes)} />
+                <PrivateRoute path={charts.url} exact={charts.exact} render={route => renderComponent(Charts)} />
+                <PrivateRoute render={route => renderComponent(NotFound)} />
+            </Switch>
             <Alert />
         </React.Fragment>
     );
