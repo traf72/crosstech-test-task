@@ -1,27 +1,27 @@
-## Постановка
+## Problem Statement
 
-####Необходимо написать web-приложение на ASP.NET Core со следующим функционалом:
+####Write a WEB application using ASP.NET Core which includes following functionality:
 
-1. Требуется авторизация пользователя по логину/паролю.
-2. Предусмотреть две роли – администратор и линейный пользователь.
-3. Отображается список сотрудников организации в виде:
-	* Имя
-	* Отчество
-	* Фамилия
-	* Пол
-	* Должность
-	* Дата рождения
-	* Телефон
-4. Сотрудников можно добавлять, удалять, а также изменять их данные, но доступ к подобному функционалу есть только у администратора.
-5. В поля имени, отчества и фамилии можно ввести только русские буквы.
-6. Поля "Пол" и "Должность" – выпадающий список с фиксированным количеством значений.
-7. Дата рождения – можно выбрать дату от 01.01.1940 до 31.12.2005.
-8. Валидация телефона в формате +7 (xxx) xxx-xx-xx.
-9. Отобразить круговую диаграмму сотрудников по полам.
-10. Отобразить круговую диаграмму сотрудников по десятилетиям рождения.
-11. Данные приложения хранятся в произвольном виде (xml, база данных, текстовый файл, прочее).
+1. User authorization using login and password.
+2. Two roles: an administrator and a plain user.
+3. Show the list of the organization employees as:
+	* Name
+	* Patronymic
+	* Surname
+	* Gender
+	* Position
+	* Date of birth
+	* Phone
+4. It's possible to add, remove or update an employee, but it can be done only by the administrator.
+5. Only Russian symbols are allowed in "Name", "Surname" and "Patronymic" fields.
+6. The fields "Gender" and "Position" are dropdowns with fixed values.
+7. Only 01.01.1940-31.12.2005 values are allowed for the "Date of birth" field.
+8. Phone validation in the format +7 (xxx) xxx-xx-xx.
+9. Show the pie chart of employees by gender.
+10. Show the pie chart of employees by decades of birth.
+11. The data of the application are stored in an arbitrary way (xml, database, text file or somewhere else).
 
-## Технологии
+## Technology stack
 
 * SQLite
 * ASP.NET Core 2
@@ -33,15 +33,15 @@
 * Bootstrap 4
 * Flow
 
-Проект можно запустить из Visual Studio 2017 (должен быть установлен пакет [.NET Core SDK](https://dotnet.microsoft.com/download)). Восстановление npm-пакетов может занять несколько минут.
+You can run this project from Visual Studio 2017 or above ([.NET Core SDK](https://dotnet.microsoft.com/download) should be installed). The restoring of npm-packages can take a while.
 
-При отсутствии Visual Studio 2017 проект можно запустить следующим образом:
+If you don't have Visual Studio 2017 you can run this project as follows:
 
-* Выполнить команду `npm install` из директории TestTask.Web\ClientApp.
-* Выполнить команду `npm run build` из директории TestTask.Web\ClientApp.
-* Выполнить команду `dotnet run` из директории TestTask.Web.
-* Перейти в браузере по адресу http://localhost:5000.
+* Run the `npm install` command from the TestTask.Web\ClientApp directory.
+* Run the `npm run build` command from the TestTask.Web\ClientApp directory.
+* Run the `dotnet run` command from the TestTask.Web directory.
+* Open the http://localhost:5000 URL in your browser.
 
-Для запуска клиентских тестов необходимо выполнить команду `npm test` из директории TestTask.Web\ClientApp.
+To launch client unit tests run the `npm test` command from the TestTask.Web\ClientApp directory.
 
-В приложении предопределены два пользователя: admin и user с соответствующими ролями. Пароль для обоих пользователей: Qw123456!
+There are two built-in users in the application: "admin" and "user" with the appropriate roles. The password for both users is Qw123456!
